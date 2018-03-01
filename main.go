@@ -19,8 +19,8 @@ func main() {
 	})
 	router.Use(middleware.AddHeader(), gin.Logger(), middleware.Recovery())
 	//static
-	router.StaticFS("/static", http.Dir("./upload"))
-	router.StaticFS("/app", http.Dir("./app"))
+	// router.StaticFS("/static", http.Dir("./upload"))
+	// router.StaticFS("/app", http.Dir("./app"))
 	// var timer, _ = common.NewDailyTimer("23:00", func() {
 	// 	cache.MoveOrderToOpen()
 	// 	//cache.MoveOrderToFinish()

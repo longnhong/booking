@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"cetm_booking/x/rest"
+	//"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

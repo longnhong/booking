@@ -2,10 +2,9 @@ package middleware
 
 import (
 	//"cetm_booking/o/push_token"
-	//	uAuth "cetm_booking/o/user/auth"
 	"cetm_booking/x/rest"
-	//"fmt"
-	//"g/x/web"
+	// "fmt"
+	// "g/x/web"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 )
@@ -56,83 +55,9 @@ func AddHeader() gin.HandlerFunc {
 	}
 }
 
-// func Authenticate() gin.HandlerFunc {
+// func AuthenticateCustomer() gin.HandlerFunc {
 // 	return func(c *gin.Context) {
-// 		var token = web.GetToken(c.Request)
-// 		var _, err = auth.GetByID(token)
-// 		if err != nil {
-// 			rest.AssertNil(rest.Unauthorized(err.Error()))
-// 		}
-// 	}
-// }
-
-// func AuthenticateAppRole(role uAuth.Role) gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		var token = web.GetToken(c.Request)
-// 		var res, err = push_token.GetByID(token)
-// 		if err != nil {
-// 			rest.AssertNil(rest.Unauthorized(err.Error()))
-// 		}
-// 		if res.Role != int(role) {
-// 			rest.AssertNil(rest.Unauthorized("Bạn không có quyền truy cập!"))
-// 		}
-// 	}
-// }
-
-// func MustBeAdmin() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticate(c, "admin")
-// 	}
-// }
-// func MustBeSuperAdmin() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticate(c, "super-admin")
-// 	}
-// }
-// func MustBeStaff() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticate(c, "staff")
-// 	}
-// }
-// func MustBeOwner() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticate(c, "owner")
-// 	}
-// }
-// func MustAuthenticate(ctx *gin.Context, role string) {
-// 	var errResponse = map[string]interface{}{
-// 		"status": "error",
-// 	}
-// 	var token = web.GetToken(ctx.Request)
-// 	var auth, err = auth.GetByID(token)
-// 	if err != nil {
-// 		errResponse["error"] = "access token not found"
-// 		ctx.JSON(401, errResponse)
-// 	} else {
-// 		if auth.Role != role {
-// 			errResponse["error"] = fmt.Sprintf("Unauthorize! you must be %s to access", role)
-// 			ctx.JSON(401, errResponse)
-// 		} else {
-// 			ctx.Next()
-// 		}
-// 	}
-// 	ctx.Abort()
-// }
-
-// func MustBeRoleEmployee() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticateRole(c, uAuth.RoleEmployee)
-// 	}
-// }
-// func MustBeRoleCustomer() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticateRole(c, uAuth.RoleCustomer)
-// 	}
-// }
-
-// func MustBeRole() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		MustAuthenticateRole(c)
+// 		MustAuthenticateApp(c, 2)
 // 	}
 // }
 
@@ -146,25 +71,12 @@ func AddHeader() gin.HandlerFunc {
 // 		errResponse["error"] = "access token not found"
 // 		ctx.JSON(401, errResponse)
 // 	} else {
-// 		if auth.Role != role {
+// 		if int(auth.Role) != role {
 // 			errResponse["error"] = fmt.Sprintf("Unauthorize! you must be %s to access", role)
 // 			ctx.JSON(401, errResponse)
 // 		} else {
 // 			ctx.Next()
 // 		}
-// 	}
-// 	ctx.Abort()
-// }
-
-// func MustAuthenticateRole(ctx *gin.Context, role uAuth.Role) {
-// 	var errResponse = map[string]interface{}{
-// 		"status": "error",
-// 	}
-// 	if !role.IsValid() {
-// 		errResponse["error"] = fmt.Sprintf("Unauthorize! you must be %s to role", role)
-// 		ctx.JSON(401, errResponse)
-// 	} else {
-// 		ctx.Next()
 // 	}
 // 	ctx.Abort()
 // }

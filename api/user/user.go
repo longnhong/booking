@@ -24,11 +24,11 @@ func (s *UserServer) handleCreate(ctx *gin.Context) {
 	s.createUser(ctx)
 }
 func (s *UserServer) createUser(ctx *gin.Context) {
-	var u *user.Staff
+	var u *user.User
 	ctx.BindJSON(&u)
-	rest.AssertNil(u.Create())
+	//rest.AssertNil(u.Create())
 	s.SendData(ctx, u)
 }
 func (s *UserServer) handleExistSuperAdmin(ctx *gin.Context) {
-	s.SendData(ctx, user.GetSuperUser())
+	//s.SendData(ctx, user.GetSuperUser())
 }

@@ -4,7 +4,7 @@ import (
 	"cetm_booking/x/db/mongodb"
 )
 
-var TicketBookingTable = mongodb.NewTable("ticket_booking", "tkbk", 18)
+var TicketBookingTable = mongodb.NewTable("tk_booking", "tkbk", 18)
 
 type TicketBooking struct {
 	mongodb.BaseModel `bson:",inline"`
@@ -18,6 +18,7 @@ type TicketBooking struct {
 	IdTicketCetm      string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	CnumCetm          string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	Status            BookingState `json:"status"  bson:"status"`
+	TypeTicket        TypeTicket   `json:"type_ticket" bson:"type_ticket"`
 }
 
 type UpdateCetm struct {
@@ -40,14 +41,22 @@ type TicketUpdate struct {
 }
 
 type TicketBookingCreate struct {
-	Customer   string `bson:"customer" json:"customer"`
-	TimeGoBank int64  `bson:"time_go_bank" json:"time_go_bank"`
-	ServiceID  string `json:"service_id" bson:"service_id"`
-	BranchID   string `json:"branch_id"  bson:"branch_id"`
-	Lang       string `json:"lang" bson:"lang"`
+	Customer   string     `bson:"customer" json:"customer"`
+	TimeGoBank int64      `bson:"time_go_bank" json:"time_go_bank"`
+	ServiceID  string     `json:"service_id" bson:"service_id"`
+	BranchID   string     `json:"branch_id"  bson:"branch_id"`
+	Lang       string     `json:"lang" bson:"lang"`
+	TypeTicket TypeTicket `json:"type_ticket" bson:"type_ticket"`
 }
 
 type BookingState string
+
+type TypeTicket string
+
+const (
+	TYPE_NOW      = TypeTicket("book_now")
+	TYPE_SCHEDUCE = TypeTicket("book_schedule")
+)
 
 const (
 	BookingStateCreated   = BookingState("created")

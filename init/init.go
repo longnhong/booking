@@ -16,7 +16,6 @@ func init() {
 	loadConfig()
 	initLog()
 	initDB()
-	//initCache()
 	initFcm()
 }
 
@@ -52,8 +51,8 @@ func initDB() {
 
 func initFcm() {
 	fcm.FCM_SERVER_KEY_CUSTOMER, _ = context.String("fcm.serverkey.customer")
-	fcm.FCM_SERVER_KEY_EMPLOYEE, _ = context.String("fcm.serverkey.employee")
-	fcm.NewFcmApp(fcm.FCM_SERVER_KEY_CUSTOMER, fcm.FCM_SERVER_KEY_EMPLOYEE)
+	fcm.NewFcmApp(fcm.FCM_SERVER_KEY_CUSTOMER)
+	fmt.Print("Qua fcm")
 }
 
 // func initCache() {

@@ -29,6 +29,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 		Customer:     btbk.Customer,
 		ServiceID:    btbk.ServiceID,
 		TimeGoBank:   btbk.TimeGoBank,
+		TypeTicket:   btbk.TypeTicket,
 		CustomerCode: cusCode,
 		Lang:         lang,
 		Status:       BookingStateCreated,
