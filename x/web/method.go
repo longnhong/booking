@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func ResParamArrUrlClient(url string, objArray interface{}) interface{} {
+func ResParamArrUrlClient(url string, objArray interface{}, objRes interface{}) error {
 	result, err := json.Marshal(objArray)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(result))
 	req.Header.Set("Content-Type", "application/json")
@@ -16,18 +16,15 @@ func ResParamArrUrlClient(url string, objArray interface{}) interface{} {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	var objres interface{}
-	json.NewDecoder(resp.Body).Decode(&objres)
-	return &objres
+	return json.NewDecoder(resp.Body).Decode(&objRes)
 }
 
-func ResUrlClientGet(url string) interface{} {
+func ResUrlClientGet(url string, objRes interface{}) error {
 	resp, err := http.Get(url)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 	var objres interface{}
-	json.NewDecoder(resp.Body).Decode(&objres)
-	return &objres
+	return json.NewDecoder(resp.Body).Decode(&objres)
 }

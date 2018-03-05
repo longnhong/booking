@@ -6,7 +6,7 @@ import (
 	"errors"
 	//	"g/x/web"
 	"gopkg.in/mgo.v2/bson"
-	//"net/http"
+	//	"net/http"
 )
 
 func GetUserByLogin(username string, password string) (error, *User) {
@@ -53,4 +53,17 @@ type UserToken struct {
 // 		rest.AssertNil(web.Unauthorized("missing or invalid access token"))
 // 	}
 // 	return usrTk
+// }
+
+// func GetFromToken(r *http.Request) {
+// 	var token = web.GetToken(r)
+// 	if len(token) < 8 {
+// 		panic(web.Unauthorized("missing or invalid access token"))
+// 	}
+// 	var push *push_token.PushToken
+// 	var err = push_token.PushTokenTable.FindByID(token, *push)
+// 	rest.AssertNil(err)
+// 	if push == nil || push.IsRevoke {
+// 		rest.AssertNil(rest.Unauthorized("Hết thời gian truy cập"))
+// 	}
 // }

@@ -4,6 +4,7 @@ import (
 	"cetm_booking/x/rest"
 	"cetm_booking/x/rest/math"
 	"errors"
+	"time"
 )
 
 var errBranchID = rest.BadRequestValid(errors.New("Không tồn tại chi nhánh"))
@@ -11,6 +12,7 @@ var errService = rest.BadRequestValid(errors.New("Không tồn tại service"))
 var errCustomer = rest.BadRequestValid(errors.New("Không lấy được thông tin khách hàng"))
 var errTimeGoBank = rest.BadRequestValid(errors.New("Chọn thời gian đến ngân hàng"))
 var errBTicketID = rest.BadRequestValid(errors.New("Chọn vé trước khi sửa thông tin"))
+var errTypeTicket = rest.BadRequestValid(errors.New("Không có loại ticket này!"))
 
 func NewParamDefault() (customerCode string, lang string) {
 	customerCode = math.RandNumString(6)
@@ -27,21 +29,30 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 	var ticket = TicketBooking{
 		BranchID:     btbk.BranchID,
 		Customer:     btbk.Customer,
+		CustomerID:   btbk.CustomerID,
 		ServiceID:    btbk.ServiceID,
 		TimeGoBank:   btbk.TimeGoBank,
 		TypeTicket:   btbk.TypeTicket,
 		CustomerCode: cusCode,
 		Lang:         lang,
-		Status:       BookingStateCreated,
+		Status:       BOOKING_STATE_CREATED,
 	}
 	return nil, &ticket
 }
 
+func CheckType(typeTK TypeTicket) error {
+	if typeTK != TYPE_NOW && typeTK != TYPE_SCHEDUCE {
+		return errTypeTicket
+	}
+	return nil
+}
+
 func (btbk *TicketUpdate) updateBf() error {
-	var err = btbk.CheckTicketBooking()
+	var err = btbk.CheckTicketBookingUp()
 	if err != nil {
 		return err
 	}
+	btbk.UpdatedAt = time.Now().Unix()
 	return nil
 }
 
@@ -49,11 +60,16 @@ func (tc *TicketUpdate) CheckTicketBookingUp() error {
 	if len(tc.BTicketID) == 0 {
 		return errBTicketID
 	}
-	err := tc.TicketBookingCreate.CheckTicketBooking()
-	if err != nil {
-		return err
+	if len(tc.BranchID) == 0 {
+		return errBranchID
 	}
-	return nil
+	if len(tc.ServiceID) == 0 {
+		return errService
+	}
+	if tc.TimeGoBank == 0 {
+		return errTimeGoBank
+	}
+	return CheckType(tc.TypeTicket)
 }
 
 func (tc *TicketBookingCreate) CheckTicketBooking() error {
@@ -69,5 +85,5 @@ func (tc *TicketBookingCreate) CheckTicketBooking() error {
 	if tc.TimeGoBank == 0 {
 		return errTimeGoBank
 	}
-	return nil
+	return CheckType(tc.TypeTicket)
 }
