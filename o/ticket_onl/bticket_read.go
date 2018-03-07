@@ -6,10 +6,17 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking, err error) {
+func CheckCustomerCode(userID string, customerCode string, branchID string) (tk *TicketBooking, err error) {
+	var timeBeginDay = utility.BeginningOfDay().Unix()
+	var tiemEnOfday = utility.EndOfDay().Unix()
 	var queryMatch = bson.M{
+		"customer_id":   userID,
 		"customer_code": customerCode,
 		"branch_id":     branchID,
+		"time_go_bank": bson.M{
+			"$gte": timeBeginDay,
+			"$lte": tiemEnOfday,
+		},
 		//"status":        BOOKING_STATE_CREATED,
 	}
 	err = TicketBookingTable.FindOne(queryMatch, &tk)

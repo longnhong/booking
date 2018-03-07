@@ -1,14 +1,14 @@
 package mrw_booking
 
 import (
+	user "cetm_booking/o/auth"
 	"cetm_booking/o/ticket_onl"
-	"fmt"
-	//"cetm_booking/o/user"
 	"cetm_booking/x/fcm"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/utility"
 	"cetm_booking/x/web"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,10 +30,10 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 }
 
 func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
-	///	var userTK = user.GetUserFromToken(ctx.Request)
+	var userTK = user.GetUserFromToken(ctx.Request)
 	var body = ticket_onl.TicketBookingCreate{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	//body.CustomerID = userTK.ID
+	body.CustomerID = userTK.ID
 	var ticket = body.CrateTicketBooking()
 	s.SendData(ctx, ticket)
 }
@@ -53,7 +53,7 @@ func (s *TicketServer) handlerUpdateTicketCetm(ctx *gin.Context) {
 }
 
 func (s *TicketServer) handlerCancelTicket(ctx *gin.Context) {
-	//	user.GetFromToken(ctx.Request)
+	user.GetFromToken(ctx.Request)
 	var body = struct {
 		BTicketID string `json:"bticket_id"`
 	}{}
@@ -64,13 +64,13 @@ func (s *TicketServer) handlerCancelTicket(ctx *gin.Context) {
 }
 
 func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
-	//	var usrTk = user.GetUserFromToken(ctx.Request)
+	var usrTk = user.GetUserFromToken(ctx.Request)
 	var body = struct {
 		CustomerCode string `json:"customer_code"`
 		BranchId     string `json:"branch_id"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var tk, err = ticket_onl.CheckCustomerCode(body.CustomerCode, body.BranchId)
+	var tk, err = ticket_onl.CheckCustomerCode(usrTk.ID, body.CustomerCode, body.BranchId)
 	rest.AssertNil(err)
 	if tk == nil {
 		rest.AssertNil(errors.New("Code sai"))
@@ -79,7 +79,7 @@ func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
 }
 
 func (s *TicketServer) handlerLoction(ctx *gin.Context) {
-	//user.GetFromToken(ctx.Request)
+	user.GetFromToken(ctx.Request)
 	var body = struct {
 		CustomerID string  `json:"customer_id"`
 		Lat        float64 `json:"lat"`

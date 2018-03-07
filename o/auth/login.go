@@ -17,6 +17,11 @@ func GetUserFromToken(r *http.Request) (usr *user.User) {
 	return
 }
 
+func GetFromToken(r *http.Request) {
+	var token = web.GetToken(r)
+	push_token.GetFromToken(token)
+}
+
 type LoginUser struct {
 	Username  string `json:"username"`
 	Password  string `json:"password"`
@@ -27,6 +32,10 @@ type LoginUser struct {
 type UserPush struct {
 	Token string     `json:"token"`
 	User  *user.User `json:"user"`
+}
+
+type User struct {
+	*user.User
 }
 
 func LoginApp(lg *LoginUser) *UserPush {
@@ -47,4 +56,8 @@ func CreatePushToken(role int, userId string, deviceID string, pushToken string)
 		PushToken: pushToken,
 	}
 	return psh.CratePushToken().ID
+}
+
+func CreateUser(u *User) error {
+	return u.CreateUser()
 }

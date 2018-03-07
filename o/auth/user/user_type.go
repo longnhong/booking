@@ -14,7 +14,7 @@ type User struct {
 
 type Role int
 
-var UserTable = mongodb.NewTable("user", "usr", 18)
+var UserTable = mongodb.NewTable("user", "usr", 20)
 
 var ROLE_CETM = Role(1)
 var ROLE_USER = Role(2)

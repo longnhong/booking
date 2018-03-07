@@ -31,5 +31,5 @@ func main() {
 	api.InitApi(rootAPI)
 	//ws
 	room.NewRoomServer(router.Group("/room"))
-	router.Run(":8080")
+	router.Run(":8989")
 }
