@@ -34,8 +34,8 @@ func (upC *UpdateCetm) UpdateTicketBookingByCetm() {
 
 func CancleTicket(id string) {
 	var updateCancel = bson.M{
-		"status":    BOOKING_STATE_CANCELLED,
-		"update_at": 0,
+		"status":     BOOKING_STATE_CANCELLED,
+		"updated_at": 0,
 	}
 	rest.AssertNil(TicketBookingTable.UnsafeUpdateByID(id, updateCancel))
 }

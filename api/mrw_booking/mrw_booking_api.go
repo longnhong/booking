@@ -24,6 +24,7 @@ func NewBookingServer(parent *gin.RouterGroup, name string) {
 	s.POST("/search_branchs", s.handlerSearchs)
 	s.POST("/search_services", s.handleService)
 	ticket.NewTicketServer(s.RouterGroup, "ticket")
+
 }
 
 func (s *BookingServer) handlerSearchs(ctx *gin.Context) {

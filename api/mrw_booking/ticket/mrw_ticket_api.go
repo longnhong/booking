@@ -2,6 +2,7 @@ package mrw_booking
 
 import (
 	"cetm_booking/o/ticket_onl"
+	"fmt"
 	//"cetm_booking/o/user"
 	"cetm_booking/x/fcm"
 	"cetm_booking/x/rest"
@@ -53,36 +54,37 @@ func (s *TicketServer) handlerUpdateTicketCetm(ctx *gin.Context) {
 
 func (s *TicketServer) handlerCancelTicket(ctx *gin.Context) {
 	//	user.GetFromToken(ctx.Request)
-	var body struct {
-		TicketID string `json: "bticket_id"`
-	}
+	var body = struct {
+		BTicketID string `json:"bticket_id"`
+	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	ticket_onl.CancleTicket(body.TicketID)
+	fmt.Println("TICKET :" + body.BTicketID)
+	ticket_onl.CancleTicket(body.BTicketID)
 	s.SendData(ctx, nil)
 }
 
 func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
 	//	var usrTk = user.GetUserFromToken(ctx.Request)
-	var body struct {
-		CustomerCode string `json: "customer_code"`
-		BranchId     string `json: "branch_id"`
-	}
+	var body = struct {
+		CustomerCode string `json:"customer_code"`
+		BranchId     string `json:"branch_id"`
+	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var count, err = ticket_onl.CheckCustomerCode(body.CustomerCode, body.BranchId)
+	var tk, err = ticket_onl.CheckCustomerCode(body.CustomerCode, body.BranchId)
 	rest.AssertNil(err)
-	if count > 0 {
+	if tk == nil {
 		rest.AssertNil(errors.New("Code sai"))
 	}
-	s.SendData(ctx, nil)
+	s.SendData(ctx, tk)
 }
 
 func (s *TicketServer) handlerLoction(ctx *gin.Context) {
 	//user.GetFromToken(ctx.Request)
-	var body struct {
-		CustomerID string  `json: "customer_id"`
-		Lat        float64 `json: "lat"`
-		Lng        float64 `json: "lng"`
-	}
+	var body = struct {
+		CustomerID string  `json:"customer_id"`
+		Lat        float64 `json:"lat"`
+		Lng        float64 `json:"lng"`
+	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var bTk, err = ticket_onl.CheckCustomerIdByDay(body.CustomerID)
 	rest.AssertNil(err)

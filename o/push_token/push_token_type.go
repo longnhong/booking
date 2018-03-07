@@ -1,7 +1,7 @@
 package push_token
 
 import (
-	"ehelp/x/db/mongodb"
+	"cetm_booking/x/db/mongodb"
 )
 
 type PushToken struct {

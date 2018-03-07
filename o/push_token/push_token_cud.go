@@ -1,8 +1,8 @@
 package push_token
 
 import (
-	"ehelp/common"
-	"ehelp/x/rest"
+	"cetm_booking/common"
+	"cetm_booking/x/rest"
 	"gopkg.in/mgo.v2/bson"
 )
 

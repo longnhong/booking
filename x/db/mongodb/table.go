@@ -2,7 +2,7 @@ package mongodb
 
 import (
 	"cetm_booking/x/rest"
-	//"fmt"
+	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -19,6 +19,7 @@ type Table struct {
 }
 
 func NewTable(name, prefix string, length int) *Table {
+	fmt.Println("DB: " + name)
 	return &Table{
 		Collection: NewCollection(name),
 		Name:       name,
@@ -44,20 +45,20 @@ func (t *Table) CreateUnique(query bson.M, model IModel) error {
 }
 
 func (t *Table) CountWhere(query bson.M) (int, error) {
-	query["update_at"] = bson.M{
+	query["updated_at"] = bson.M{
 		"$ne": 0,
 	}
 	return t.Find(query).Count()
 }
 
 func (t *Table) FindWhere(query bson.M, result interface{}) error {
-	query["update_at"] = bson.M{
+	query["updated_at"] = bson.M{
 		"$ne": 0,
 	}
 	return t.Find(query).All(result)
 }
 func (t *Table) FindOne(query bson.M, result interface{}) error {
-	query["update_at"] = bson.M{
+	query["updated_at"] = bson.M{
 		"$ne": 0,
 	}
 	return t.Find(query).One(result)
@@ -67,7 +68,7 @@ func (t *Table) FindByID(id string, result interface{}) error {
 }
 
 func (t *Table) DeleteByID(id string) error {
-	return t.UpdateId(id, bson.M{"$set": bson.M{"update_at": 0}})
+	return t.UpdateId(id, bson.M{"$set": bson.M{"updated_at": 0}})
 }
 
 func (t *Table) UnsafeUpdateByID(id string, data interface{}) error {
