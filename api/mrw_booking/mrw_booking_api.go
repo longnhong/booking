@@ -1,15 +1,12 @@
 package mrw_booking
 
 import (
-	// "cetm_booking/o/ticket_onl"
-	//"bytes"
-	// "cetm_booking/x/fcm"
 	ticket "cetm_booking/api/mrw_booking/ticket"
+	user "cetm_booking/o/auth"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/web"
 	"errors"
 	"github.com/gin-gonic/gin"
-	//"net/http"
 )
 
 type BookingServer struct {
@@ -22,12 +19,13 @@ func NewBookingServer(parent *gin.RouterGroup, name string) {
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/search_branchs", s.handlerSearchs)
-	s.POST("/search_services", s.handleService)
+	s.GET("/search_services", s.handleService)
 	ticket.NewTicketServer(s.RouterGroup, "ticket")
 
 }
 
 func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
+	user.GetFromToken(ctx.Request)
 	var body = []AddressBank{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var urlStr = "http://123.31.12.147:8888/room/booking/search_banks"
@@ -40,6 +38,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 }
 
 func (s *BookingServer) handleService(ctx *gin.Context) {
+	user.GetFromToken(ctx.Request)
 	var url = "http://mqserver:3000/room/booking/search_services"
 	var res interface{}
 	rest.AssertNil(web.ResUrlClientGet(url, &res))

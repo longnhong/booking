@@ -22,6 +22,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/create", s.handlerCreateTicket)
+	s.POST("/get_ticket_day", s.handlerGetTicketDay)
 	s.POST("/cus_update", s.handlerUpdateTicketCus)
 	s.POST("/cetm_update", s.handlerUpdateTicketCetm)
 	s.POST("/canceled", s.handlerCancelTicket)
@@ -39,6 +40,7 @@ func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
 }
 
 func (s *TicketServer) handlerUpdateTicketCus(ctx *gin.Context) {
+	user.GetFromToken(ctx.Request)
 	var body = ticket_onl.TicketUpdate{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var tk = body.UpdateTicketBookingByCustomer()
@@ -63,14 +65,21 @@ func (s *TicketServer) handlerCancelTicket(ctx *gin.Context) {
 	s.SendData(ctx, nil)
 }
 
-func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
+func (s *TicketServer) handlerGetTicketDay(ctx *gin.Context) {
 	var usrTk = user.GetUserFromToken(ctx.Request)
+	var bTks, err = ticket_onl.CheckTicketByDay(usrTk.ID)
+	rest.AssertNil(err)
+	s.SendData(ctx, bTks)
+}
+
+func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
+	//var usrTk = user.GetUserFromToken(ctx.Request)
 	var body = struct {
 		CustomerCode string `json:"customer_code"`
 		BranchId     string `json:"branch_id"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var tk, err = ticket_onl.CheckCustomerCode(usrTk.ID, body.CustomerCode, body.BranchId)
+	var tk, err = ticket_onl.CheckCustomerCode(body.CustomerCode, body.BranchId)
 	rest.AssertNil(err)
 	if tk == nil {
 		rest.AssertNil(errors.New("Code sai"))
@@ -79,14 +88,13 @@ func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
 }
 
 func (s *TicketServer) handlerLoction(ctx *gin.Context) {
-	user.GetFromToken(ctx.Request)
+	var userTK = user.GetUserFromToken(ctx.Request)
 	var body = struct {
-		CustomerID string  `json:"customer_id"`
-		Lat        float64 `json:"lat"`
-		Lng        float64 `json:"lng"`
+		Lat float64 `json:"lat"`
+		Lng float64 `json:"lng"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var bTk, err = ticket_onl.CheckCustomerIdByDay(body.CustomerID)
+	var bTk, err = ticket_onl.CheckTicketByDay(userTK.ID)
 	rest.AssertNil(err)
 	var data = SearchBank(bTk.BranchID)
 	if data == nil {

@@ -1,6 +1,7 @@
 package init
 
 import (
+	"cetm_booking/common"
 	"cetm_booking/x/config"
 	"cetm_booking/x/db/mongodb"
 	"cetm_booking/x/fcm"
@@ -17,6 +18,7 @@ func init() {
 	initLog()
 	initDB()
 	initFcm()
+	initConfigSytem()
 }
 
 var context *config.Context
@@ -55,6 +57,13 @@ func initFcm() {
 	fmt.Print("Qua fcm")
 }
 
-// func initCache() {
-// 	rest.AssertNil(cache.SetCacheSystem())
-// }
+func initConfigSytem() {
+	linkCetm, _ := context.String("server.cetm")
+	linkSearchMap, _ := context.String("server.map_search")
+	port, _ := context.String("server.port")
+	common.ConfigSystemBooking = common.ConfigSystem{
+		LinkCetm:      linkCetm,
+		LinkSearchMap: linkSearchMap,
+		PortBooking:   port,
+	}
+}

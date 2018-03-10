@@ -5,6 +5,7 @@ import (
 	_ "cetm_booking/init"
 	// 2. iniit 2nd
 	"cetm_booking/api"
+	"cetm_booking/common"
 	"cetm_booking/middleware"
 	"cetm_booking/room"
 	"github.com/gin-gonic/gin"
@@ -31,5 +32,5 @@ func main() {
 	api.InitApi(rootAPI)
 	//ws
 	room.NewRoomServer(router.Group("/room"))
-	router.Run(":8989")
+	router.Run(common.ConfigSystemBooking.PortBooking)
 }
