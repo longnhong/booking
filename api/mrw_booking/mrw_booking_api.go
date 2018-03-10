@@ -2,6 +2,7 @@ package mrw_booking
 
 import (
 	ticket "cetm_booking/api/mrw_booking/ticket"
+	"cetm_booking/common"
 	user "cetm_booking/o/auth"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/web"
@@ -28,7 +29,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	var body = []AddressBank{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var urlStr = "http://123.31.12.147:8888/room/booking/search_banks"
+	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_banks"
 	var res *Data
 	rest.AssertNil(web.ResParamArrUrlClient(urlStr, &body, &res))
 	if res.Status == "error" {
@@ -39,7 +40,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 
 func (s *BookingServer) handleService(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
-	var url = "http://mqserver:3000/room/booking/search_services"
+	var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_services"
 	var res interface{}
 	rest.AssertNil(web.ResUrlClientGet(url, &res))
 	s.SendData(ctx, &res)

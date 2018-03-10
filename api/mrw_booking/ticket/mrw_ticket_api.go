@@ -1,6 +1,7 @@
 package mrw_booking
 
 import (
+	"cetm_booking/common"
 	user "cetm_booking/o/auth"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/fcm"
@@ -114,7 +115,7 @@ func (s *TicketServer) handlerLoction(ctx *gin.Context) {
 }
 
 func SearchBank(branchID string) *InfoBank {
-	var urlStr = "http://123.31.12.147:8888/room/booking/search_bank?branch_id=" + branchID
+	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_bank?branch_id=" + branchID
 	var data *DataBank
 	rest.AssertNil(web.ResUrlClientGet(urlStr, &data))
 	if data.Status == "error" {
