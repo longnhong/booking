@@ -85,6 +85,7 @@ func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
 	if tk == nil {
 		rest.AssertNil(errors.New("Code sai"))
 	}
+	rest.AssertNil(ticket_onl.UpdateTimeCheckIn(tk.ID))
 	s.SendData(ctx, tk)
 }
 

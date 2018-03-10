@@ -7,6 +7,7 @@ import (
 	"cetm_booking/x/rest"
 	"cetm_booking/x/web"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +30,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	var body = []AddressBank{}
 	rest.AssertNil(ctx.BindJSON(&body))
+	fmt.Println("CETM: " + common.ConfigSystemBooking.LinkCetm)
 	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_banks"
 	var res *Data
 	rest.AssertNil(web.ResParamArrUrlClient(urlStr, &body, &res))
@@ -40,10 +42,11 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 
 func (s *BookingServer) handleService(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
+	fmt.Println("CETM: " + common.ConfigSystemBooking.LinkCetm)
 	var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_services"
-	var res interface{}
+	var res *DataServices
 	rest.AssertNil(web.ResUrlClientGet(url, &res))
-	s.SendData(ctx, &res)
+	s.SendData(ctx, &res.Data)
 }
 
 type Data struct {
@@ -73,4 +76,25 @@ type AddressBank struct {
 type InfoBankNow struct {
 	AddressBank
 	CountPeople int `json:"count_people"`
+}
+
+type Service struct {
+	ID   string `json:"id"`
+	Code string `json:"code"`
+	L10n LangCD `json:"l10n"`
+}
+
+type DataService struct {
+	Data Service `json:"data"`
+}
+
+type DataServices struct {
+	Data []*Service `json:"data"`
+}
+
+type LangCD struct {
+	Eng string `json:"eng"`
+	Es  string `json:"es"`
+	Sp  string `json:"sp"`
+	Vi  string `json:"vi"`
 }

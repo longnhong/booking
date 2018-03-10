@@ -1,9 +1,11 @@
 package ticket_onl
 
 import (
+	"cetm_booking/x/rest"
 	"cetm_booking/x/utility"
 	"errors"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking, err error) {
@@ -20,6 +22,9 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 	}
 	err = TicketBookingTable.FindOne(queryMatch, &tk)
 	if err != nil {
+		if err.Error() == "not found" {
+			err = rest.BadRequestValid(errors.New("Code không tồn tại!"))
+		}
 		return
 	}
 	if tk.Status == BOOKING_STATE_CANCELLED || tk.Status == BOOKING_STATE_FINISHED {
@@ -54,4 +59,11 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 		"status": BOOKING_STATE_CREATED,
 	}
 	return btks, TicketBookingTable.FindOne(queryMatch, &btks)
+}
+
+func UpdateTimeCheckIn(id string) error {
+	var up = bson.M{
+		"check_in_at": time.Now().Unix(),
+	}
+	return TicketBookingTable.UnsafeUpdateByID(id, up)
 }

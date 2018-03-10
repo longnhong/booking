@@ -3,6 +3,7 @@ package web
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -20,11 +21,11 @@ func ResParamArrUrlClient(url string, objArray interface{}, objRes interface{}) 
 }
 
 func ResUrlClientGet(url string, objRes interface{}) error {
+	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	var objres interface{}
-	return json.NewDecoder(resp.Body).Decode(&objres)
+	return json.NewDecoder(resp.Body).Decode(&objRes)
 }
