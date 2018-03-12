@@ -29,6 +29,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.POST("/canceled", s.handlerCancelTicket)
 	s.POST("/check_code", s.handlerCheckCode)
 	s.GET("/branch_tickets", s.handlerGetTicketDayInBranch)
+	s.GET("/branch_cetm_tickets", s.handlerGetTicketsDay)
 	s.POST("/check_location", s.handlerLoction)
 }
 
@@ -71,6 +72,14 @@ func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 		"time_tickets": result,
 	}
 	s.SendData(ctx, res)
+}
+
+func (s *TicketServer) handlerGetTicketsDay(ctx *gin.Context) {
+	var request = ctx.Request
+	var branchID = request.URL.Query().Get("branch_id")
+	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID)
+	rest.AssertNil(err)
+	s.SendData(ctx, reslt)
 }
 
 func (s *TicketServer) handlerUpdateTicketCetm(ctx *gin.Context) {

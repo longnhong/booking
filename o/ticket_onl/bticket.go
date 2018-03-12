@@ -76,3 +76,8 @@ const (
 	BOOKING_STATE_CANCELLED = BookingState("cancelled")
 	BOOKING_STATE_FINISHED  = BookingState("finished")
 )
+
+type TicketBranches struct {
+	BranchID       string
+	TicketBookings []*TicketBooking
+}
