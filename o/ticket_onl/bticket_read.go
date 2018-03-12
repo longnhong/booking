@@ -61,9 +61,28 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 	return btks, TicketBookingTable.FindOne(queryMatch, &btks)
 }
 
-func UpdateTimeCheckIn(id string) error {
+func (tk *TicketBooking) UpdateTimeCheckIn() error {
+	var timeNow = time.Now().Unix()
 	var up = bson.M{
-		"check_in_at": time.Now().Unix(),
+		"check_in_at": timeNow,
 	}
-	return TicketBookingTable.UnsafeUpdateByID(id, up)
+	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
+	if err == nil {
+		tk.CheckInAt = timeNow
+	}
+	return err
+}
+
+func GetTicketDayInBranch(branchID string) (btks []*TicketBooking, err error) {
+	var timeBeginDay = utility.BeginningOfDay().Unix()
+	var tiemEnOfday = utility.EndOfDay().Unix()
+	var queryMatch = bson.M{
+		"branch_id": branchID,
+		"time_go_bank": bson.M{
+			"$gte": timeBeginDay,
+			"$lte": tiemEnOfday,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }

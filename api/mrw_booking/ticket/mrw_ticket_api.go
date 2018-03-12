@@ -1,4 +1,4 @@
-package mrw_booking
+package ticket
 
 import (
 	"cetm_booking/common"
@@ -28,6 +28,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.POST("/cetm_update", s.handlerUpdateTicketCetm)
 	s.POST("/canceled", s.handlerCancelTicket)
 	s.POST("/check_code", s.handlerCheckCode)
+	s.GET("/branch_tickets", s.handlerGetTicketDayInBranch)
 	s.POST("/check_location", s.handlerLoction)
 }
 
@@ -46,6 +47,24 @@ func (s *TicketServer) handlerUpdateTicketCus(ctx *gin.Context) {
 	rest.AssertNil(ctx.BindJSON(&body))
 	var tk = body.UpdateTicketBookingByCustomer()
 	s.SendData(ctx, tk)
+}
+
+func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
+	var request = ctx.Request
+	user.GetFromToken(request)
+	var branchID = request.URL.Query().Get("branch_id")
+	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID)
+	var result = make([]int64, len(reslt))
+	for i, item := range reslt {
+		result[i] = item.TimeGoBank
+	}
+	rest.AssertNil(err)
+	var data = SearchBank(branchID)
+	var res = map[string]interface{}{
+		"bank":         data,
+		"time_tickets": result,
+	}
+	s.SendData(ctx, res)
 }
 
 func (s *TicketServer) handlerUpdateTicketCetm(ctx *gin.Context) {
@@ -85,7 +104,7 @@ func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
 	if tk == nil {
 		rest.AssertNil(errors.New("Code sai"))
 	}
-	rest.AssertNil(ticket_onl.UpdateTimeCheckIn(tk.ID))
+	rest.AssertNil(tk.UpdateTimeCheckIn())
 	s.SendData(ctx, tk)
 }
 
@@ -123,17 +142,4 @@ func SearchBank(branchID string) *InfoBank {
 		rest.AssertNil(errors.New("Không tìm thấy Branch này!"))
 	}
 	return data.Data
-}
-
-type DataBank struct {
-	Data   *InfoBank `json:"data"`
-	Status string    `json:"status"`
-}
-
-type InfoBank struct {
-	Lat         float64 `json:"lat"`
-	Lng         float64 `json:"lng"`
-	Address     string  `json:"address"`
-	BranchID    string  `json:branch_id`
-	CountPeople int     `json:"count_people"`
 }
