@@ -1,5 +1,9 @@
 package ticket
 
+import (
+	"cetm_booking/o/ticket_onl"
+)
+
 type DataBank struct {
 	Data   *InfoBank `json:"data"`
 	Status string    `json:"status"`
@@ -13,5 +17,13 @@ type InfoBank struct {
 	CountPeople int     `json:"count_people"`
 }
 
-type DataAllTimeCreate struct {
+type DataTicketCetm struct {
+	Id   string `json:"id"`
+	Cnum string `json:"cnum"`
+}
+
+type DataTicketBookNow struct {
+	Data          DataTicketCetm           `json:"data"`
+	TicketBooking ticket_onl.TicketBooking `json:"ticket_booking"`
+	Status        string                   `json:"status"`
 }

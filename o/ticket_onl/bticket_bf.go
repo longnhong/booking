@@ -37,6 +37,9 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 		Lang:         lang,
 		Status:       BOOKING_STATE_CREATED,
 	}
+	if btbk.TypeTicket == TYPE_NOW {
+		ticket.CheckInAt = btbk.TimeGoBank
+	}
 	return nil, &ticket
 }
 

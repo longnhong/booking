@@ -18,7 +18,7 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 			"$gte": timeBeginDay,
 			"$lte": tiemEnOfday,
 		},
-		//"status":        BOOKING_STATE_CREATED,
+		//"status": BOOKING_STATE_CREATED,
 	}
 	err = TicketBookingTable.FindOne(queryMatch, &tk)
 	if err != nil {
@@ -29,6 +29,8 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 	}
 	if tk.Status == BOOKING_STATE_CANCELLED || tk.Status == BOOKING_STATE_FINISHED {
 		err = errors.New("Vé đã kết thúc!")
+	} else if tk.CheckInAt != 0 {
+		err = rest.BadRequestValid(errors.New("Code đã sử dụng!"))
 	}
 	return
 }
@@ -64,11 +66,28 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 func (tk *TicketBooking) UpdateTimeCheckIn() error {
 	var timeNow = time.Now().Unix()
 	var up = bson.M{
+		"updated_at":  time.Now().Unix(),
 		"check_in_at": timeNow,
+		"status":      BOOKING_STATE_CONFIRMED,
 	}
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CheckInAt = timeNow
+	}
+	return err
+}
+
+func (tk *TicketBooking) UpdateByCnumCetm(cnum string, idCetm string) error {
+	var up = bson.M{
+		"cnum_cetm":      cnum,
+		"id_ticket_cetm": idCetm,
+		"status":         BOOKING_STATE_CONFIRMED,
+	}
+	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
+	if err == nil {
+		tk.CnumCetm = cnum
+		tk.IdTicketCetm = idCetm
+		tk.Status = BOOKING_STATE_CONFIRMED
 	}
 	return err
 }

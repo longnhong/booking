@@ -23,7 +23,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/create", s.handlerCreateTicket)
-	s.POST("/get_ticket_day", s.handlerGetTicketDay)
+	s.POST("/mine", s.handlerGetTicketDay)
 	s.POST("/cus_update", s.handlerUpdateTicketCus)
 	s.POST("/cetm_update", s.handlerUpdateTicketCetm)
 	s.POST("/canceled", s.handlerCancelTicket)
@@ -38,6 +38,12 @@ func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
 	rest.AssertNil(ctx.BindJSON(&body))
 	body.CustomerID = userTK.ID
 	var ticket = body.CrateTicketBooking()
+	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
+		var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/system_add_bkticket"
+		var data *DataTicketBookNow
+		rest.AssertNil(web.ResParamArrUrlClient(url, body, &data))
+		ticket.UpdateByCnumCetm(data.Data.Cnum, data.Data.Id)
+	}
 	s.SendData(ctx, ticket)
 }
 
@@ -136,6 +142,16 @@ func (s *TicketServer) handlerLoction(ctx *gin.Context) {
 
 func SearchBank(branchID string) *InfoBank {
 	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_bank?branch_id=" + branchID
+	var data *DataBank
+	rest.AssertNil(web.ResUrlClientGet(urlStr, &data))
+	if data.Status == "error" {
+		rest.AssertNil(errors.New("Không tìm thấy Branch này!"))
+	}
+	return data.Data
+}
+
+func CreateTicket(tk *ticket_onl.TicketBooking) *InfoBank {
+	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/system_add_bkticket"
 	var data *DataBank
 	rest.AssertNil(web.ResUrlClientGet(urlStr, &data))
 	if data.Status == "error" {

@@ -72,6 +72,7 @@ const (
 
 const (
 	BOOKING_STATE_CREATED   = BookingState("created")
+	BOOKING_STATE_CONFIRMED = BookingState("confirmed")
 	BOOKING_STATE_CANCELLED = BookingState("cancelled")
 	BOOKING_STATE_FINISHED  = BookingState("finished")
 )
