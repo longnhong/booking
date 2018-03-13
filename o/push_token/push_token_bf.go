@@ -1,11 +1,14 @@
 package push_token
 
 import (
+	"cetm_booking/x/mlog"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/rest/validator"
 
 	"gopkg.in/mgo.v2/bson"
 )
+
+var log = mlog.NewTagLog("push_token")
 
 func (tok *PushToken) create() {
 	rest.AssertNil(validator.Validate(tok))

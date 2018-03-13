@@ -24,6 +24,7 @@ type AddressBank struct {
 	Lat     float64 `json:"lat"`
 	Lng     float64 `json:"lng"`
 	Address string  `json:"address"`
+	KmScan  float64 `json:"km_scan"`
 }
 
 type InfoBankNow struct {

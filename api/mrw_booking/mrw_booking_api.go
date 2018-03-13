@@ -28,10 +28,14 @@ func NewBookingServer(parent *gin.RouterGroup, name string) {
 
 func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
-	var body = []AddressBank{}
+	var body []*AddressBank
 	rest.AssertNil(ctx.BindJSON(&body))
 	fmt.Println("CETM: " + common.ConfigSystemBooking.LinkCetm)
 	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_banks"
+	var kmScan = common.ConfigSystemBooking.KmSearch
+	for _, item := range body {
+		item.KmScan = kmScan
+	}
 	var res *Data
 	rest.AssertNil(web.ResParamArrUrlClient(urlStr, &body, &res))
 	if res.Status == "error" {

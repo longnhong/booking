@@ -8,13 +8,19 @@ import (
 	"net/http"
 )
 
-func GetUserFromToken(r *http.Request) (usr *user.User) {
+func GetUserFromToken(r *http.Request) (usr *user.User, push *push_token.PushToken) {
 	var token = web.GetToken(r)
-	var push = push_token.GetFromToken(token)
+	push = push_token.GetFromToken(token)
 	var err error
 	usr, err = user.GetByID(push.UserId)
 	rest.AssertNil(err)
 	return
+}
+
+func GetUserByID(userID string) *user.User {
+	var usr, err = user.GetByID(userID)
+	rest.AssertNil(err)
+	return usr
 }
 
 func GetFromToken(r *http.Request) {

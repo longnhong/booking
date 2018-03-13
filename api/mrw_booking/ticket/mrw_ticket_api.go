@@ -34,15 +34,26 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 }
 
 func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
-	var userTK = user.GetUserFromToken(ctx.Request)
+	var userTK, push = user.GetUserFromToken(ctx.Request)
 	var body = ticket_onl.TicketBookingCreate{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	body.CustomerID = userTK.ID
 	var ticket = body.CrateTicketBooking()
+	var noti = fcm.FmcMessage{
+		Title: "Tạo vé thành công!",
+		Body:  "Ngân hàng đã trừ 5000VND từ tài khoản của bạn!"}
+	fcm.FcmCustomer.SendToOne(push.PushToken, noti)
+
 	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
+		var dataTicketSend = DataTicketSendCetm{
+			TicketBooking: ticket,
+			Customer:      userTK,
+		}
+		fmt.Println(dataTicketSend)
 		var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/system_add_bkticket"
-		var data *DataTicketBookNow
-		rest.AssertNil(web.ResParamArrUrlClient(url, body, &data))
+		fmt.Println(url)
+		var data = DataTicketBookNow{}
+		rest.AssertNil(web.ResParamArrUrlClient(url, dataTicketSend, &data))
 		ticket.UpdateByCnumCetm(data.Data.Cnum, data.Data.Id)
 	}
 	s.SendData(ctx, ticket)
@@ -101,7 +112,7 @@ func (s *TicketServer) handlerCancelTicket(ctx *gin.Context) {
 }
 
 func (s *TicketServer) handlerGetTicketDay(ctx *gin.Context) {
-	var usrTk = user.GetUserFromToken(ctx.Request)
+	var usrTk, _ = user.GetUserFromToken(ctx.Request)
 	var bTks, err = ticket_onl.CheckTicketByDay(usrTk.ID)
 	rest.AssertNil(err)
 	s.SendData(ctx, bTks)
@@ -114,17 +125,22 @@ func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
 		BranchId     string `json:"branch_id"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var tk, err = ticket_onl.CheckCustomerCode(body.CustomerCode, body.BranchId)
+	var ticket, err = ticket_onl.CheckCustomerCode(body.CustomerCode, body.BranchId)
 	rest.AssertNil(err)
-	if tk == nil {
+	if ticket == nil {
 		rest.AssertNil(errors.New("Code sai"))
 	}
-	rest.AssertNil(tk.UpdateTimeCheckIn())
-	s.SendData(ctx, tk)
+	rest.AssertNil(ticket.UpdateTimeCheckIn())
+	var userTK = user.GetUserByID(ticket.CustomerID)
+	var data = DataTicketSendCetm{
+		TicketBooking: ticket,
+		Customer:      userTK,
+	}
+	s.SendData(ctx, data)
 }
 
 func (s *TicketServer) handlerLoction(ctx *gin.Context) {
-	var userTK = user.GetUserFromToken(ctx.Request)
+	var userTK, _ = user.GetUserFromToken(ctx.Request)
 	var body = struct {
 		Lat float64 `json:"lat"`
 		Lng float64 `json:"lng"`
@@ -139,7 +155,7 @@ func (s *TicketServer) handlerLoction(ctx *gin.Context) {
 	var distance = utility.Haversine(data.Lat, data.Lng, body.Lat, body.Lng)
 	if distance < 0.02 {
 		var noti = fcm.FmcMessage{
-			Title: "Có việc mới!",
+			Title: "Thông báo!",
 			Body:  "Bạn đang trong phạm vi ngân hàng!"}
 		fcm.FcmCustomer.SendToOne("fmB1I_-GMqY:APA91bFVDqGQNKHcnYca6zzQ0ZG0kOyu92bloOcynHU4izvFFXvVbRIWglI2fVq4zp0XDILv282sQcTcX72lElG2VsmbfTzENj5rE_3R7pVCae8J57xaevCbXKGrZgzqwJnirembyUlM", noti)
 		s.SendData(ctx, data)

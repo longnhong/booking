@@ -11,6 +11,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strconv"
 )
 
 func init() {
@@ -61,9 +62,12 @@ func initConfigSytem() {
 	linkCetm, _ := context.String("server.cetm")
 	linkSearchMap, _ := context.String("server.map_search")
 	port, _ := context.String("server.port")
+	kmStr, _ := context.String("server.search_km")
+	km, _ := strconv.ParseFloat(kmStr, 64)
 	common.ConfigSystemBooking = common.ConfigSystem{
 		LinkCetm:      linkCetm,
 		LinkSearchMap: linkSearchMap,
 		PortBooking:   port,
+		KmSearch:      km,
 	}
 }

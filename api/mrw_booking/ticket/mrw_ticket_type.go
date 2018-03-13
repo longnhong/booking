@@ -1,6 +1,7 @@
 package ticket
 
 import (
+	"cetm_booking/o/auth/user"
 	"cetm_booking/o/ticket_onl"
 )
 
@@ -26,4 +27,9 @@ type DataTicketBookNow struct {
 	Data          DataTicketCetm           `json:"data"`
 	TicketBooking ticket_onl.TicketBooking `json:"ticket_booking"`
 	Status        string                   `json:"status"`
+}
+
+type DataTicketSendCetm struct {
+	TicketBooking *ticket_onl.TicketBooking `json:"ticket_booking"`
+	Customer      *user.User                `json:"customer"`
 }

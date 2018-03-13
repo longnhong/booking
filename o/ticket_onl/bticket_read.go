@@ -105,3 +105,16 @@ func GetTicketDayInBranch(branchID string) (btks []*TicketBooking, err error) {
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
+
+func GetAllTicketDay() (btks []*TicketBooking, err error) {
+	var timeBeginDay = utility.BeginningOfDay().Unix()
+	var tiemEnOfday = utility.EndOfDay().Unix()
+	var queryMatch = bson.M{
+		"time_go_bank": bson.M{
+			"$gte": timeBeginDay,
+			"$lte": tiemEnOfday,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+}

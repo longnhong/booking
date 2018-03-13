@@ -8,7 +8,6 @@ var TicketBookingTable = mongodb.NewTable("tk_booking", "tkbk", 18)
 
 type TicketBooking struct {
 	mongodb.BaseModel `bson:",inline"`
-	Customer          string       `bson:"customer" json:"customer"`
 	TimeGoBank        int64        `bson:"time_go_bank" json:"time_go_bank"`
 	ServiceID         string       `json:"service_id" bson:"service_id"`
 	BranchID          string       `json:"branch_id"  bson:"branch_id"`
@@ -19,6 +18,7 @@ type TicketBooking struct {
 	CheckInAt         int64        `json:"check_in_at"  bson:"check_in_at"`
 	IdTicketCetm      string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	CnumCetm          string       `json:"cnum_cetm"  bson:"cnum_cetm"`
+	TellerID          string       `json:"teller_id"  bson:"teller_id"`
 	Teller            string       `json:"teller"  bson:"teller"`
 	ServingTime       string       `json:"serving_time"  bson:"serving_time"`
 	WatingTime        string       `json:"wating_time"  bson:"wating_time"`

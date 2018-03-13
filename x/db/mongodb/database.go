@@ -1,6 +1,11 @@
 package mongodb
 
-import "gopkg.in/mgo.v2"
+import (
+	"cetm_booking/x/mlog"
+	"gopkg.in/mgo.v2"
+)
+
+var logDB = mlog.NewTagLog("MONGO_DB")
 
 type Database struct {
 	s       *mgo.Session

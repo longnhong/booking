@@ -30,7 +30,11 @@ func NewTable(name, prefix string, length int) *Table {
 
 func (t *Table) Create(model IModel) error {
 	model.BeforeCreate(t.Prefix, t.Length)
-	return t.Insert(model)
+	var err = t.Insert(model)
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
 }
 
 func (t *Table) CreateUnique(query bson.M, model IModel) error {
@@ -39,8 +43,10 @@ func (t *Table) CreateUnique(query bson.M, model IModel) error {
 		if count == 0 {
 			return t.Create(model)
 		}
+		logDB.Errorln(ERR_EXIST)
 		return ERR_EXIST
 	}
+	logDB.Errorln(err)
 	return err
 }
 
@@ -48,29 +54,53 @@ func (t *Table) CountWhere(query bson.M) (int, error) {
 	query["updated_at"] = bson.M{
 		"$ne": 0,
 	}
-	return t.Find(query).Count()
+	var c, err = t.Find(query).Count()
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return c, err
 }
 
 func (t *Table) FindWhere(query bson.M, result interface{}) error {
 	query["updated_at"] = bson.M{
 		"$ne": 0,
 	}
-	return t.Find(query).All(result)
+	var err = t.Find(query).All(result)
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
 }
 func (t *Table) FindOne(query bson.M, result interface{}) error {
 	query["updated_at"] = bson.M{
 		"$ne": 0,
 	}
-	return t.Find(query).One(result)
+	var err = t.Find(query).One(result)
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
 }
 func (t *Table) FindByID(id string, result interface{}) error {
-	return t.FindId(id).One(result)
+	var err = t.FindId(id).One(result)
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
 }
 
 func (t *Table) DeleteByID(id string) error {
-	return t.UpdateId(id, bson.M{"$set": bson.M{"updated_at": 0}})
+	var err = t.UpdateId(id, bson.M{"$set": bson.M{"updated_at": 0}})
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
 }
 
 func (t *Table) UnsafeUpdateByID(id string, data interface{}) error {
-	return t.UpdateId(id, bson.M{"$set": data})
+	var err = t.UpdateId(id, bson.M{"$set": data})
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
 }
