@@ -3,6 +3,7 @@ package ticket
 import (
 	"cetm_booking/common"
 	user "cetm_booking/o/auth"
+	"cetm_booking/o/rate"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/fcm"
 	"cetm_booking/x/rest"
@@ -32,6 +33,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.GET("/branch_tickets", s.handlerGetTicketDayInBranch)
 	s.GET("/branch_cetm_tickets", s.handlerGetTicketsDay)
 	s.POST("/check_location", s.handlerLoction)
+	s.POST("/rate", s.handlerRate)
 }
 
 func (s *TicketServer) handlerGetTicketAll(ctx *gin.Context) {
@@ -124,6 +126,15 @@ func (s *TicketServer) handlerGetTicketDay(ctx *gin.Context) {
 	var bTks, err = ticket_onl.CheckTicketByDay(usrTk.ID)
 	rest.AssertNil(err)
 	s.SendData(ctx, bTks)
+}
+
+func (s *TicketServer) handlerRate(ctx *gin.Context) {
+	var usrTk, _ = user.GetUserFromToken(ctx.Request)
+	var body *rate.Rate
+	rest.AssertNil(ctx.BindJSON(&body))
+	body.CustomerId = usrTk.ID
+	body.CrateRate()
+	s.SendData(ctx, nil)
 }
 
 func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
