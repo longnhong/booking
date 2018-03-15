@@ -1,6 +1,7 @@
 package ticket_onl
 
 import (
+	"cetm_booking/o/auth/user"
 	"cetm_booking/x/db/mongodb"
 )
 
@@ -26,9 +27,9 @@ type TicketBooking struct {
 }
 
 type UpdateCetm struct {
-	Teller       string       `json:"teller"  bson:"teller"`
 	BTicketID    string       `bson:"bticket_id" json:"bticket_id"`
-	CheckInAt    int64        `json:"check_in_at"  bson:"check_in_at"`
+	Teller       string       `json:"teller"  bson:"teller"`
+	TellerID     string       `json:"teller_id"  bson:"teller_id"`
 	IdTicketCetm string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	CnumCetm     string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	Status       BookingState `json:"status"  bson:"status"`
@@ -80,4 +81,9 @@ const (
 type TicketBranches struct {
 	BranchID       string
 	TicketBookings []*TicketBooking
+}
+
+type TicketUser struct {
+	TicketBooking `bson:",inline"`
+	Customer      *user.User `json:"customer" bson:"customer"`
 }

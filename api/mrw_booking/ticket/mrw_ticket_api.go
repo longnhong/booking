@@ -23,7 +23,8 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/create", s.handlerCreateTicket)
-	s.POST("/mine", s.handlerGetTicketDay)
+	s.POST("/mine_day", s.handlerGetTicketDay)
+	s.GET("/mine_all", s.handlerGetTicketAll)
 	s.POST("/cus_update", s.handlerUpdateTicketCus)
 	s.POST("/cetm_update", s.handlerUpdateTicketCetm)
 	s.POST("/canceled", s.handlerCancelTicket)
@@ -31,6 +32,13 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.GET("/branch_tickets", s.handlerGetTicketDayInBranch)
 	s.GET("/branch_cetm_tickets", s.handlerGetTicketsDay)
 	s.POST("/check_location", s.handlerLoction)
+}
+
+func (s *TicketServer) handlerGetTicketAll(ctx *gin.Context) {
+	var userTK, _ = user.GetUserFromToken(ctx.Request)
+	var tks, err = ticket_onl.GetAllTicketCus(userTK.ID)
+	rest.AssertNil(err)
+	s.SendData(ctx, tks)
 }
 
 func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {

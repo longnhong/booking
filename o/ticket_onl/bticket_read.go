@@ -49,6 +49,13 @@ func GetCustomerIdByDay(customerId string) (btks []*TicketBooking, err error) {
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
 
+func GetAllTicketCus(customerId string) (btks []*TicketBooking, err error) {
+	var queryMatch = bson.M{
+		"customer_id": customerId,
+	}
+	return btks, TicketBookingTable.UnsafeFindSort(queryMatch, "-created_at", &btks)
+}
+
 func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 	var timeBeginDay = utility.BeginningOfDay().Unix()
 	var tiemEnOfday = utility.EndOfDay().Unix()
@@ -92,7 +99,7 @@ func (tk *TicketBooking) UpdateByCnumCetm(cnum string, idCetm string) error {
 	return err
 }
 
-func GetTicketDayInBranch(branchID string) (btks []*TicketBooking, err error) {
+func GetTicketDayInBranch(branchID string) (btks []*TicketUser, err error) {
 	var timeBeginDay = utility.BeginningOfDay().Unix()
 	var tiemEnOfday = utility.EndOfDay().Unix()
 	var queryMatch = bson.M{
@@ -103,7 +110,21 @@ func GetTicketDayInBranch(branchID string) (btks []*TicketBooking, err error) {
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
-	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+	var query = []bson.M{}
+	var joinUser = bson.M{
+		"from":         "user",
+		"localField":   "customer_id",
+		"foreignField": "_id",
+		"as":           "customer",
+	}
+	var unWindCus = "$customer"
+	query = []bson.M{
+		{"$match": queryMatch},
+		{"$lookup": joinUser},
+		{"$unwind": unWindCus},
+	}
+	err = TicketBookingTable.Pipe(query).All(&btks)
+	return btks, err
 }
 
 func GetAllTicketDay() (btks []*TicketBooking, err error) {

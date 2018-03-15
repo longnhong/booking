@@ -104,3 +104,11 @@ func (t *Table) UnsafeUpdateByID(id string, data interface{}) error {
 	}
 	return err
 }
+
+func (t *Table) UnsafeFindSort(queryMatch bson.M, fields string, result interface{}) error {
+	var err = t.Find(queryMatch).Sort(fields).All(result)
+	if err != nil {
+		logDB.Errorln(err)
+	}
+	return err
+}
