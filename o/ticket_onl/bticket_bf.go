@@ -27,14 +27,16 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 	}
 	var cusCode, lang = NewParamDefault()
 	var ticket = TicketBooking{
-		BranchID:     btbk.BranchID,
-		CustomerID:   btbk.CustomerID,
-		ServiceID:    btbk.ServiceID,
-		TimeGoBank:   btbk.TimeGoBank,
-		TypeTicket:   btbk.TypeTicket,
-		CustomerCode: cusCode,
-		Lang:         lang,
-		Status:       BOOKING_STATE_CREATED,
+		BranchID:      btbk.BranchID,
+		BranchAddress: btbk.BranchAddress,
+		CustomerID:    btbk.CustomerID,
+		ServiceID:     btbk.ServiceID,
+		ServiceName:   btbk.ServiceName,
+		TimeGoBank:    btbk.TimeGoBank,
+		TypeTicket:    btbk.TypeTicket,
+		CustomerCode:  cusCode,
+		Lang:          lang,
+		Status:        BOOKING_STATE_CREATED,
 	}
 	if btbk.TypeTicket == TYPE_NOW {
 		ticket.CheckInAt = btbk.TimeGoBank
@@ -78,9 +80,9 @@ func (tc *TicketBookingCreate) CheckTicketBooking() error {
 	if len(tc.BranchID) == 0 {
 		return errBranchID
 	}
-	if len(tc.Customer) == 0 {
-		return errCustomer
-	}
+	// if len(tc.Customer) == 0 {
+	// 	return errCustomer
+	// }
 	if len(tc.ServiceID) == 0 {
 		return errService
 	}

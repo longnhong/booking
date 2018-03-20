@@ -11,7 +11,9 @@ type TicketBooking struct {
 	mongodb.BaseModel `bson:",inline"`
 	TimeGoBank        int64        `bson:"time_go_bank" json:"time_go_bank"`
 	ServiceID         string       `json:"service_id" bson:"service_id"`
+	ServiceName       string       `json:"service_name" bson:"service_name"`
 	BranchID          string       `json:"branch_id"  bson:"branch_id"`
+	BranchAddress     string       `json:"branch_address"  bson:"branch_address"`
 	TypeTicket        TypeTicket   `json:"type_ticket" bson:"type_ticket"`
 	Lang              string       `json:"lang" bson:"lang"`
 	CustomerCode      string       `bson:"customer_code" json:"customer_code"`
@@ -33,8 +35,8 @@ type UpdateCetm struct {
 	IdTicketCetm string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	CnumCetm     string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	Status       BookingState `json:"status"  bson:"status"`
-	ServingTime  string       `json:"serving_time"  bson:"serving_time"`
-	WatingTime   string       `json:"wating_time"  bson:"wating_time"`
+	ServingTime  int64        `json:"serving_time"  bson:"serving_time"`
+	WatingTime   int64        `json:"wating_time"  bson:"wating_time"`
 }
 
 type WhenCreateTicketInCetm struct {
@@ -44,22 +46,26 @@ type WhenCreateTicketInCetm struct {
 }
 
 type TicketUpdate struct {
-	UpdatedAt  int64      `json:"updated_at" bson:"updated_at"`
-	BTicketID  string     `bson:"bticket_id" json:"bticket_id"`
-	TimeGoBank int64      `bson:"time_go_bank" json:"time_go_bank"`
-	ServiceID  string     `json:"service_id" bson:"service_id"`
-	BranchID   string     `json:"branch_id"  bson:"branch_id"`
-	TypeTicket TypeTicket `json:"type_ticket" bson:"type_ticket"`
+	UpdatedAt     int64      `json:"updated_at" bson:"updated_at"`
+	BTicketID     string     `bson:"bticket_id" json:"bticket_id"`
+	TimeGoBank    int64      `bson:"time_go_bank" json:"time_go_bank"`
+	ServiceID     string     `json:"service_id" bson:"service_id"`
+	ServiceName   string     `json:"service_name" bson:"service_name"`
+	BranchID      string     `json:"branch_id"  bson:"branch_id"`
+	BranchAddress string     `json:"branch_address"  bson:"branch_address"`
+	TypeTicket    TypeTicket `json:"type_ticket" bson:"type_ticket"`
 }
 
 type TicketBookingCreate struct {
-	Customer   string     `bson:"customer" json:"customer"`
-	TimeGoBank int64      `bson:"time_go_bank" json:"time_go_bank"`
-	ServiceID  string     `json:"service_id" bson:"service_id"`
-	BranchID   string     `json:"branch_id"  bson:"branch_id"`
-	Lang       string     `json:"lang" bson:"lang"`
-	CustomerID string     `json:"customer_id" bson:"customer_id"`
-	TypeTicket TypeTicket `json:"type_ticket" bson:"type_ticket"`
+	Customer      string     `bson:"customer" json:"customer"`
+	TimeGoBank    int64      `bson:"time_go_bank" json:"time_go_bank"`
+	BranchAddress string     `json:"branch_address"  bson:"branch_address"`
+	ServiceID     string     `json:"service_id" bson:"service_id"`
+	ServiceName   string     `json:"service_name" bson:"service_name"`
+	BranchID      string     `json:"branch_id"  bson:"branch_id"`
+	Lang          string     `json:"lang" bson:"lang"`
+	CustomerID    string     `json:"customer_id" bson:"customer_id"`
+	TypeTicket    TypeTicket `json:"type_ticket" bson:"type_ticket"`
 }
 
 type BookingState string

@@ -67,7 +67,14 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
-	return btks, TicketBookingTable.FindOne(queryMatch, &btks)
+	err = TicketBookingTable.FindOne(queryMatch, &btks)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return btks, nil
 }
 
 func (tk *TicketBooking) UpdateTimeCheckIn() error {

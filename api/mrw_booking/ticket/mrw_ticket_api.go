@@ -24,7 +24,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/create", s.handlerCreateTicket)
-	s.POST("/mine_day", s.handlerGetTicketDay)
+	s.GET("/mine_day", s.handlerGetTicketDay)
 	s.GET("/mine_all", s.handlerGetTicketAll)
 	s.POST("/cus_update", s.handlerUpdateTicketCus)
 	s.POST("/cetm_update", s.handlerUpdateTicketCetm)
