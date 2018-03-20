@@ -79,7 +79,7 @@ func GetTicketNear(customerId string) (btk *TicketBooking, err error) {
 	}
 	var btks []*TicketBooking
 	err = TicketBookingTable.UnsafeFindSort(queryMatch, "-created_at", &btks)
-	if err == nil {
+	if err == nil && len(btks) > 0 {
 		btk = btks[0]
 	}
 	rest.IsErrorRecord(err)
