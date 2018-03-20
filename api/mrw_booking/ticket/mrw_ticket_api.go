@@ -33,12 +33,19 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.GET("/branch_tickets", s.handlerGetTicketDayInBranch)
 	s.GET("/branch_cetm_tickets", s.handlerGetTicketsDay)
 	s.POST("/check_location", s.handlerLoction)
+	s.GET("/ticket_near", s.handlerTicketNear)
 	s.POST("/rate", s.handlerRate)
 }
 
 func (s *TicketServer) handlerGetTicketAll(ctx *gin.Context) {
 	var userTK, _ = user.GetUserFromToken(ctx.Request)
 	var tks, err = ticket_onl.GetAllTicketCus(userTK.ID)
+	rest.AssertNil(err)
+	s.SendData(ctx, tks)
+}
+func (s *TicketServer) handlerTicketNear(ctx *gin.Context) {
+	var userTK, _ = user.GetUserFromToken(ctx.Request)
+	var tks, err = ticket_onl.GetTicketNear(userTK.ID)
 	rest.AssertNil(err)
 	s.SendData(ctx, tks)
 }
@@ -123,7 +130,7 @@ func (s *TicketServer) handlerCancelTicket(ctx *gin.Context) {
 
 func (s *TicketServer) handlerGetTicketDay(ctx *gin.Context) {
 	var usrTk, _ = user.GetUserFromToken(ctx.Request)
-	var bTks, err = ticket_onl.CheckTicketByDay(usrTk.ID)
+	var bTks, err = ticket_onl.GetCustomerIdByDay(usrTk.ID)
 	rest.AssertNil(err)
 	s.SendData(ctx, bTks)
 }

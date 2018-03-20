@@ -46,7 +46,9 @@ func GetCustomerIdByDay(customerId string) (btks []*TicketBooking, err error) {
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
-	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+	err = TicketBookingTable.FindWhere(queryMatch, &btks)
+	err = rest.IsErrorRecord(err)
+	return btks, err
 }
 
 func GetAllTicketCus(customerId string) (btks []*TicketBooking, err error) {
@@ -67,14 +69,21 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
-	err = TicketBookingTable.FindOne(queryMatch, &btks)
-	if err != nil {
-		if err.Error() == "not found" {
-			return nil, nil
-		}
-		return nil, err
+	return btks, TicketBookingTable.FindOne(queryMatch, &btks)
+}
+
+func GetTicketNear(customerId string) (btk *TicketBooking, err error) {
+	var queryMatch = bson.M{
+		"customer_id": customerId,
+		"status":      BOOKING_STATE_FINISHED,
 	}
-	return btks, nil
+	var btks []*TicketBooking
+	err = TicketBookingTable.UnsafeFindSort(queryMatch, "-created_at", &btks)
+	if err == nil {
+		btk = btks[0]
+	}
+	rest.IsErrorRecord(err)
+	return btk, err
 }
 
 func (tk *TicketBooking) UpdateTimeCheckIn() error {

@@ -37,6 +37,14 @@ func BadRequestValid(err error) error {
 	}
 	return nil
 }
+
+func IsErrorRecord(err error) error {
+	if err != nil && err.Error() == "not found" {
+		return nil
+	}
+	return err
+}
+
 func BadRequestValidString(err string) error {
 	if len(err) > 0 {
 		return ValidError(err)
