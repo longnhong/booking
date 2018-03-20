@@ -19,6 +19,7 @@ type TicketBooking struct {
 	CustomerCode      string       `bson:"customer_code" json:"customer_code"`
 	CustomerID        string       `json:"customer_id"  bson:"customer_id"`
 	CheckInAt         int64        `json:"check_in_at"  bson:"check_in_at"`
+	AvatarTeller      string       `json:"avatar_teller"  bson:"avatar_teller"`
 	IdTicketCetm      string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	CnumCetm          string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	TellerID          string       `json:"teller_id"  bson:"teller_id"`
@@ -31,6 +32,7 @@ type TicketBooking struct {
 type UpdateCetm struct {
 	BTicketID    string       `bson:"bticket_id" json:"bticket_id"`
 	Teller       string       `json:"teller"  bson:"teller"`
+	AvatarTeller string       `json:"avatar_teller"  bson:"avatar_teller"`
 	TellerID     string       `json:"teller_id"  bson:"teller_id"`
 	IdTicketCetm string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	CnumCetm     string       `json:"cnum_cetm"  bson:"cnum_cetm"`
