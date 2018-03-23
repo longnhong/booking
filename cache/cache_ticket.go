@@ -18,9 +18,9 @@ func AddCachePushCustomer() {
 
 	for _, item := range tickets {
 		var tkAdd = make([]*ticket_onl.TicketBooking, 0)
-		if math.CompareDayTime(timeNow, item.CheckInAt) == 0 {
+		if math.CompareDayTime(timeNow, item.TimeGoBank) == 0 {
 			var hourItem = 7
-			var dateTicket = time.Unix(item.CheckInAt, 0)
+			var dateTicket = time.Unix(item.TimeGoBank, 0)
 			if dateTicket.Hour() > 10 {
 				hourItem = dateTicket.Hour() - 3
 			}
@@ -48,13 +48,14 @@ func SendPush() {
 		if len(CacheTicketAll) > 0 {
 			if tks, ok := CacheTicketAll[timeHour]; ok {
 				for _, tk := range tks {
-					var dateTicket = time.Unix(tk.CheckInAt, 0)
+					var dateTicket = time.Unix(tk.TimeGoBank, 0)
 					var pushTokens, _ = push_token.GetPushsUserId(tk.CustomerID)
 					var noti = fcm.FmcMessage{
 						Title: "Gần đến giờ đặt vé!",
 						Body:  "Thời gian: " + strconv.Itoa(dateTicket.Hour()) + ":" + strconv.Itoa(dateTicket.Minute()) + ". \n Trân trọng kính mời quý khách!",
 					}
 					fcm.FcmCustomer.SendToMany(pushTokens, noti)
+					delete(CacheTicketAll, timeHour)
 				}
 			}
 		}

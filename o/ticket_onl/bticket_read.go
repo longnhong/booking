@@ -51,11 +51,24 @@ func GetCustomerIdByDay(customerId string) (btks []*TicketBooking, err error) {
 	return btks, err
 }
 
-func GetAllTicketCus(customerId string) (btks []*TicketBooking, err error) {
+func GetAllTicketCus(customerId string) (btks []*RateTicket, err error) {
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 	}
-	return btks, TicketBookingTable.UnsafeFindSort(queryMatch, "-created_at", &btks)
+	var query = []bson.M{}
+	var joinRate = bson.M{
+		"from":         "rate",
+		"localField":   "ticket_id",
+		"foreignField": "_id",
+		"as":           "rate",
+	}
+	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
+	query = []bson.M{
+		{"$match": queryMatch},
+		{"$lookup": joinRate},
+		{"$unwind": unWindRate},
+	}
+	return btks, TicketBookingTable.Pipe(query).All(&btks)
 }
 
 func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
@@ -72,13 +85,31 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 	return btks, TicketBookingTable.FindOne(queryMatch, &btks)
 }
 
-func GetTicketNear(customerId string) (btk *TicketBooking, err error) {
+func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 		"status":      BOOKING_STATE_FINISHED,
 	}
-	var btks []*TicketBooking
-	err = TicketBookingTable.UnsafeFindSort(queryMatch, "-created_at", &btks)
+	var query = []bson.M{}
+	var sort = bson.M{
+		"created_at": -1,
+	}
+	var joinRate = bson.M{
+		"from":         "rate",
+		"localField":   "ticket_id",
+		"foreignField": "_id",
+		"as":           "rate",
+	}
+	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
+	query = []bson.M{
+		{"$match": queryMatch},
+		{"$lookup": joinRate},
+		{"$unwind": unWindRate},
+		{"$sort": sort},
+	}
+
+	var btks []*RateTicket
+	err = TicketBookingTable.Pipe(query).All(&btks)
 	if err == nil && len(btks) > 0 {
 		btk = btks[0]
 	}

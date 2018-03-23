@@ -2,6 +2,7 @@ package ticket_onl
 
 import (
 	"cetm_booking/o/auth/user"
+	"cetm_booking/o/rate"
 	"cetm_booking/x/db/mongodb"
 )
 
@@ -27,6 +28,11 @@ type TicketBooking struct {
 	ServingTime       string       `json:"serving_time"  bson:"serving_time"`
 	WatingTime        string       `json:"wating_time"  bson:"wating_time"`
 	Status            BookingState `json:"status"  bson:"status"`
+}
+
+type RateTicket struct {
+	TicketBooking `bson:",inline"`
+	Rate          *rate.Rate `json:"rate"  bson:"rate"`
 }
 
 type UpdateCetm struct {

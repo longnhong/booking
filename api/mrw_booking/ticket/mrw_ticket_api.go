@@ -3,15 +3,19 @@ package ticket
 import (
 	"cetm_booking/common"
 	user "cetm_booking/o/auth"
+	"cetm_booking/o/push_token"
 	"cetm_booking/o/rate"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/fcm"
+	"cetm_booking/x/math"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/utility"
 	"cetm_booking/x/web"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
+	"time"
 )
 
 type TicketServer struct {
@@ -35,6 +39,25 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.POST("/check_location", s.handlerLoction)
 	s.GET("/ticket_near", s.handlerTicketNear)
 	s.POST("/rate", s.handlerRate)
+
+	s.GET("/send_push", s.handlerSendPush)
+}
+
+func (s *TicketServer) handlerSendPush(ctx *gin.Context) {
+	var timeNow = time.Now()
+	var tickets, _ = ticket_onl.GetAllTicketDay()
+
+	for _, item := range tickets {
+		if math.CompareDayTime(timeNow, item.TimeGoBank) == 0 {
+			var dateTicket = time.Unix(item.TimeGoBank, 0)
+			var pushTokens, _ = push_token.GetPushsUserId(item.CustomerID)
+			var noti = fcm.FmcMessage{
+				Title: "Gần đến giờ đặt vé!",
+				Body:  "Thời gian: " + strconv.Itoa(dateTicket.Hour()) + ":" + strconv.Itoa(dateTicket.Minute()) + ". \n Trân trọng kính mời quý khách!",
+			}
+			fcm.FcmCustomer.SendToMany(pushTokens, noti)
+		}
+	}
 }
 
 func (s *TicketServer) handlerGetTicketAll(ctx *gin.Context) {
@@ -43,6 +66,7 @@ func (s *TicketServer) handlerGetTicketAll(ctx *gin.Context) {
 	rest.AssertNil(err)
 	s.SendData(ctx, tks)
 }
+
 func (s *TicketServer) handlerTicketNear(ctx *gin.Context) {
 	var userTK, _ = user.GetUserFromToken(ctx.Request)
 	var tks, err = ticket_onl.GetTicketNear(userTK.ID)
