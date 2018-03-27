@@ -1,7 +1,7 @@
 package worker
 
 import (
-	"cetm/qapi/x/mlog"
+	"cetm_booking/x/mlog"
 	"time"
 )
 

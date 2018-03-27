@@ -54,6 +54,7 @@ func GetCustomerIdByDay(customerId string) (btks []*TicketBooking, err error) {
 func GetAllTicketCus(customerId string) (btks []*RateTicket, err error) {
 	var queryMatch = bson.M{
 		"customer_id": customerId,
+		"updated_at":  bson.M{"$ne": 0},
 	}
 	var query = []bson.M{}
 	var joinRate = bson.M{
