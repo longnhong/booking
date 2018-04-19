@@ -32,10 +32,14 @@ func (upC *UpdateCetm) UpdateTicketBookingByCetm() {
 	rest.AssertNil(TicketBookingTable.UnsafeUpdateByID(upC.BTicketID, upC))
 }
 
-func CancleTicket(id string) {
+func MarkDeleteTicket(id string) (tk *TicketBooking) {
 	var updateCancel = bson.M{
-		"status":     BOOKING_STATE_CANCELLED,
+		"status":     BOOKING_STATE_DELETE,
 		"updated_at": 0,
 	}
 	rest.AssertNil(TicketBookingTable.UnsafeUpdateByID(id, updateCancel))
+	var err error
+	tk, err = GetByID(id)
+	rest.AssertNil(err)
+	return tk
 }

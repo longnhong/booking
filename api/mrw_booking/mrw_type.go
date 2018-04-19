@@ -7,31 +7,35 @@ type Data struct {
 }
 
 type DataBank struct {
-	Data   InfoBank `json:"data"`
-	Status string   `json:"status"`
+	Data   *InfoBank `json:"data"`
+	Status string    `json:"status"`
 }
 
 type InfoBank struct {
-	Lat         float64 `json:"lat"`
-	Lng         float64 `json:"lng"`
-	Address     string  `json:"address"`
-	KmScan      float64 `json:"km_scan"`
-	BranchID    string  `json:"branch_id"`
-	CountPeople int     `json:"count_people"`
+	Lat                 float64     `json:"lat"`
+	Lng                 float64     `json:"lng"`
+	Address             string      `json:"address"`
+	KmScan              float64     `json:"km_scan"`
+	BranchID            string      `json:"branch_id"`
+	CountPeople         int         `json:"count_people"`
+	Services            interface{} `json:"services"`
+	CountCounterService int         `json:"count_counter_service"`
 }
 
 /* DATA BANKS */
 type AddressBank struct {
-	Lat     float64 `json:"lat"`
-	Lng     float64 `json:"lng"`
-	Address string  `json:"address"`
-	KmScan  float64 `json:"km_scan"`
+	Lat        float64 `json:"lat"`
+	Lng        float64 `json:"lng"`
+	Address    string  `json:"address"`
+	NameBranch string  `json:"name"`
 }
 
-type InfoBankNow struct {
-	AddressBank
-	CountPeople int `json:"count_people"`
-}
+// type InfoBankNow struct {
+// 	AddressBank
+// 	CountPeople         int         `json:"count_people"`
+// 	Counters            interface{} `json:"counters"`
+// 	CountCounterService int         `json:"count_counter_service"`
+// }
 
 /* DATA SERVICES */
 type DataService struct {

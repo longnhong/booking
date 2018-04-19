@@ -1,6 +1,7 @@
 package mrw_booking
 
 import (
+	"cetm_booking/api/mrw_booking/notify"
 	ticket "cetm_booking/api/mrw_booking/ticket"
 	"cetm_booking/common"
 	user "cetm_booking/o/auth"
@@ -23,19 +24,21 @@ func NewBookingServer(parent *gin.RouterGroup, name string) {
 	s.POST("/search_branchs", s.handlerSearchs)
 	s.GET("/search_services", s.handleService)
 	ticket.NewTicketServer(s.RouterGroup, "ticket")
-
+	notify.NewNotifyServer(s.RouterGroup, "notify")
 }
 
 func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
-	var body []*AddressBank
+	var body = struct {
+		KmScan       float64        `json:"km_scan"`
+		ServiceID    string         `json:"service_id"`
+		AddressBanks []*AddressBank `json:"address_banks"`
+	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	fmt.Println("CETM: " + common.ConfigSystemBooking.LinkCetm)
 	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_banks"
 	var kmScan = common.ConfigSystemBooking.KmSearch
-	for _, item := range body {
-		item.KmScan = kmScan
-	}
+	body.KmScan = kmScan
 	var res *Data
 	rest.AssertNil(web.ResParamArrUrlClient(urlStr, &body, &res))
 	if res.Status == "error" {

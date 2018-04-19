@@ -38,6 +38,7 @@ func GetFromToken(token string) *PushToken {
 	}
 	var push *PushToken
 	var err = PushTokenTable.FindByID(token, &push)
+	rest.IsErrorRecord(err)
 	rest.AssertNil(err)
 	if push == nil || push.IsRevoke {
 		rest.AssertNil(rest.Unauthorized("Hết thời gian truy cập"))

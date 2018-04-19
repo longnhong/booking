@@ -17,6 +17,8 @@ func GetUserFromToken(r *http.Request) (usr *user.User, push *push_token.PushTok
 	return
 }
 
+type UserAuth user.User
+
 func GetUserByID(userID string) *user.User {
 	var usr, err = user.GetByID(userID)
 	rest.AssertNil(err)

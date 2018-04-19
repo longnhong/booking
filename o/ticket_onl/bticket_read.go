@@ -35,19 +35,28 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 	return
 }
 
-func GetCustomerIdByDay(customerId string) (btks []*TicketBooking, err error) {
-	var timeBeginDay = utility.BeginningOfDay().Unix()
-	var tiemEnOfday = utility.EndOfDay().Unix()
+func GetCustomerMySchedule(customerId string) (btks []*RateTicket, err error) {
+	var status = []string{string(BOOKING_STATE_CANCELLED), (string(BOOKING_STATE_FINISHED))}
 	var queryMatch = bson.M{
 		"customer_id": customerId,
-		"time_go_bank": bson.M{
-			"$gte": timeBeginDay,
-			"$lte": tiemEnOfday,
-		},
-		"status": BOOKING_STATE_CREATED,
+		"updated_at":  bson.M{"$ne": 0},
+		"status":      bson.M{"$in": status},
 	}
-	err = TicketBookingTable.FindWhere(queryMatch, &btks)
-	err = rest.IsErrorRecord(err)
+	var query = []bson.M{}
+	var joinRate = bson.M{
+		"from":         "rate",
+		"localField":   "_id",
+		"foreignField": "bticket_id",
+		"as":           "rate",
+	}
+	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
+	query = []bson.M{
+		{"$match": queryMatch},
+		{"$lookup": joinRate},
+		{"$unwind": unWindRate},
+	}
+	err = TicketBookingTable.Pipe(query).All(&btks)
+	rest.IsErrorRecord(err)
 	return btks, err
 }
 
@@ -59,8 +68,8 @@ func GetAllTicketCus(customerId string) (btks []*RateTicket, err error) {
 	var query = []bson.M{}
 	var joinRate = bson.M{
 		"from":         "rate",
-		"localField":   "ticket_id",
-		"foreignField": "_id",
+		"localField":   "_id",
+		"foreignField": "bticket_id",
 		"as":           "rate",
 	}
 	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
@@ -97,8 +106,8 @@ func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 	}
 	var joinRate = bson.M{
 		"from":         "rate",
-		"localField":   "ticket_id",
-		"foreignField": "_id",
+		"localField":   "_id",
+		"foreignField": "bticket_id",
 		"as":           "rate",
 	}
 	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
@@ -186,4 +195,41 @@ func GetAllTicketDay() (btks []*TicketBooking, err error) {
 		"status": BOOKING_STATE_CREATED,
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+}
+
+func GetAllTicketByTimeSearch(timeSearch int64) (btks []*TicketBooking, err error) {
+	var start, end = utility.BeginAndEndDay(timeSearch)
+	var queryMatch = bson.M{
+		"time_go_bank": bson.M{
+			"$gte": start,
+			"$lte": end,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+}
+
+func GetByID(id string) (tk *TicketBooking, err error) {
+	err = TicketBookingTable.FindByID(id, &tk)
+	rest.IsErrorRecord(err)
+	return
+}
+
+func GetTicketByUserNeedFeedback(userId string) (tks []*TicketBooking, err error) {
+	var queryMatch = bson.M{
+		"customer_id": userId,
+		"status":      BOOKING_STATE_FINISHED,
+	}
+	err = TicketBookingTable.FindWhere(queryMatch, &tks)
+	rest.IsErrorRecord(err)
+	return
+}
+
+func UpdateRate(id string, numRate TypeRate) (err error) {
+	var up = bson.M{
+		"is_rate": numRate,
+	}
+	err = TicketBookingTable.UnsafeUpdateByID(id, up)
+	rest.IsErrorRecord(err)
+	return
 }

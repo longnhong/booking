@@ -27,6 +27,7 @@ type TicketBooking struct {
 	Teller            string       `json:"teller"  bson:"teller"`
 	ServingTime       int64        `json:"serving_time"  bson:"serving_time"`
 	WaitingTime       int64        `json:"waiting_time"  bson:"waiting_time"`
+	IsRate            TypeRate     `json:"is_rate"  bson:"is_rate"` //0: chưa rate, 1:rate, 2: khong rate
 	Status            BookingState `json:"status"  bson:"status"`
 }
 
@@ -80,6 +81,14 @@ type BookingState string
 
 type TypeTicket string
 
+type TypeRate int
+
+const (
+	TYPE_DEFAULT_RATE = TypeRate(0)
+	TYPE_RATED        = TypeRate(1)
+	TYPE_NO_RATE      = TypeRate(2)
+)
+
 const (
 	TYPE_NOW      = TypeTicket("book_now")
 	TYPE_SCHEDUCE = TypeTicket("book_schedule")
@@ -89,6 +98,7 @@ const (
 	BOOKING_STATE_CREATED   = BookingState("created")
 	BOOKING_STATE_CONFIRMED = BookingState("confirmed")
 	BOOKING_STATE_CANCELLED = BookingState("cancelled")
+	BOOKING_STATE_DELETE    = BookingState("deleted")
 	BOOKING_STATE_FINISHED  = BookingState("finished")
 )
 

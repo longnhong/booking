@@ -375,3 +375,10 @@ func GetDayCount(dateStart int64, dateEnd int64) (dayCount int, dateTime1 time.T
 	dayCount = int(dateTime2.Sub(dateTime1).Hours() / 24)
 	return
 }
+
+func BeginAndEndDay(val int64) (start int64, end int64) {
+	var timeNow = time.Unix(val, 0)
+	start = New(timeNow).BeginningOfDay().Unix()
+	end = New(timeNow).EndOfDay().Unix()
+	return
+}
