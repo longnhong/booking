@@ -25,18 +25,18 @@ func (tok *PushToken) update() {
 	tok.IsRevoke = true
 }
 
-func CheckTokenRevoke(token string) (error, *PushToken) {
+func CheckTokenRevoke(token string) (*PushToken, error) {
 	var tok PushToken
-	return PushTokenTable.FindOne(bson.M{
+	return &tok, PushTokenTable.FindOne(bson.M{
 		"id":        token,
 		"is_revoke": true,
-	}, &tok), &tok
+	}, &tok)
 }
 
-func CheckTokenByUserId(userId string) (error, *PushToken) {
+func CheckTokenByUserId(userId string) (*PushToken, error) {
 	var tok PushToken
-	return PushTokenTable.FindOne(bson.M{
+	return &tok, PushTokenTable.FindOne(bson.M{
 		"user_id":   userId,
 		"is_revoke": false,
-	}, &tok), &tok
+	}, &tok)
 }

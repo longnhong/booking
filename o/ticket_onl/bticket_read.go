@@ -1,16 +1,16 @@
 package ticket_onl
 
 import (
+	"cetm_booking/x/math"
 	"cetm_booking/x/rest"
-	"cetm_booking/x/utility"
 	"errors"
 	"gopkg.in/mgo.v2/bson"
 	"time"
 )
 
 func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking, err error) {
-	var timeBeginDay = utility.BeginningOfDay().Unix()
-	var tiemEnOfday = utility.EndOfDay().Unix()
+	var timeBeginDay = math.BeginningOfDay().Unix()
+	var tiemEnOfday = math.EndOfDay().Unix()
 	var queryMatch = bson.M{
 		"customer_code": customerCode,
 		"branch_id":     branchID,
@@ -82,8 +82,8 @@ func GetAllTicketCus(customerId string) (btks []*RateTicket, err error) {
 }
 
 func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
-	var timeBeginDay = utility.BeginningOfDay().Unix()
-	var tiemEnOfday = utility.EndOfDay().Unix()
+	var timeBeginDay = math.BeginningOfDay().Unix()
+	var tiemEnOfday = math.EndOfDay().Unix()
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 		"time_go_bank": bson.M{
@@ -137,6 +137,7 @@ func (tk *TicketBooking) UpdateTimeCheckIn() error {
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CheckInAt = timeNow
+		tk.Status = BOOKING_STATE_CONFIRMED
 	}
 	return err
 }
@@ -157,8 +158,8 @@ func (tk *TicketBooking) UpdateByCnumCetm(cnum string, idCetm string) error {
 }
 
 func GetTicketDayInBranch(branchID string) (btks []*TicketUser, err error) {
-	var timeBeginDay = utility.BeginningOfDay().Unix()
-	var tiemEnOfday = utility.EndOfDay().Unix()
+	var timeBeginDay = math.BeginningOfDay().Unix()
+	var tiemEnOfday = math.EndOfDay().Unix()
 	var queryMatch = bson.M{
 		"branch_id": branchID,
 		"time_go_bank": bson.M{
@@ -185,8 +186,8 @@ func GetTicketDayInBranch(branchID string) (btks []*TicketUser, err error) {
 }
 
 func GetAllTicketDay() (btks []*TicketBooking, err error) {
-	var timeBeginDay = utility.BeginningOfDay().Unix()
-	var tiemEnOfday = utility.EndOfDay().Unix()
+	var timeBeginDay = math.BeginningOfDay().Unix()
+	var tiemEnOfday = math.EndOfDay().Unix()
 	var queryMatch = bson.M{
 		"time_go_bank": bson.M{
 			"$gte": timeBeginDay,
@@ -198,7 +199,7 @@ func GetAllTicketDay() (btks []*TicketBooking, err error) {
 }
 
 func GetAllTicketByTimeSearch(timeSearch int64) (btks []*TicketBooking, err error) {
-	var start, end = utility.BeginAndEndDay(timeSearch)
+	var start, end = math.BeginAndEndDay(timeSearch)
 	var queryMatch = bson.M{
 		"time_go_bank": bson.M{
 			"$gte": start,
@@ -207,6 +208,24 @@ func GetAllTicketByTimeSearch(timeSearch int64) (btks []*TicketBooking, err erro
 		"status": BOOKING_STATE_CREATED,
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+}
+
+func SearchTicket(idBranchs []string, timeStart int64, timeEnd int64) (btks []*TicketSchedule, err error) {
+	//var start, end = math.BeginAndEndDay(timeSearch)
+	var queryMatch = bson.M{
+		"branch_id": bson.M{"$in": idBranchs},
+		"time_go_bank": bson.M{
+			"$gte": timeStart,
+			"$lte": timeEnd,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+	var group = bson.M{"_id": "$branch_id", "count": bson.M{"$sum": 1}}
+	var query = []bson.M{
+		{"$match": queryMatch},
+		{"$group": group},
+	}
+	return btks, TicketBookingTable.Pipe(query).All(&btks)
 }
 
 func GetByID(id string) (tk *TicketBooking, err error) {

@@ -18,7 +18,12 @@ func (s *Service) New() error {
 		s.queue <- 1
 	}
 	s.Open = 0
-	s.baseSession, err = mgo.Dial(s.URL)
+	var dialInfo = &mgo.DialInfo{
+		Addrs:    []string{s.URL},
+		Username: "longtm",
+		Password: "longcuc@23031993@18021995",
+	}
+	s.baseSession, err = mgo.DialWithInfo(dialInfo)
 	return err
 }
 

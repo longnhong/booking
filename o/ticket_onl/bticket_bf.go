@@ -14,9 +14,8 @@ var errTimeGoBank = rest.BadRequestValid(errors.New("Chọn thời gian đến n
 var errBTicketID = rest.BadRequestValid(errors.New("Chọn vé trước khi sửa thông tin"))
 var errTypeTicket = rest.BadRequestValid(errors.New("Không có loại ticket này!"))
 
-func NewParamDefault() (customerCode string, lang string) {
+func NewParamDefault() (customerCode string) {
 	customerCode = math.RandNumString(6)
-	lang = "vi"
 	return
 }
 
@@ -25,7 +24,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 	if err != nil {
 		return err, nil
 	}
-	var cusCode, lang = NewParamDefault()
+	var cusCode = NewParamDefault()
 	var ticket = TicketBooking{
 		BranchID:      btbk.BranchID,
 		BranchAddress: btbk.BranchAddress,
@@ -35,7 +34,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 		TimeGoBank:    btbk.TimeGoBank,
 		TypeTicket:    btbk.TypeTicket,
 		CustomerCode:  cusCode,
-		Lang:          lang,
+		Lang:          btbk.Lang,
 		Status:        BOOKING_STATE_CREATED,
 	}
 	if btbk.TypeTicket == TYPE_NOW {

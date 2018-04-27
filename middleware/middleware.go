@@ -5,15 +5,17 @@ import (
 	"cetm_booking/x/rest"
 	// "fmt"
 	// "g/x/web"
+	"cetm_booking/x/mlog"
 	"github.com/gin-gonic/gin"
-	"github.com/golang/glog"
 )
+
+var logMiddle = mlog.NewTagLog("middle")
 
 func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				glog.Error(err)
+				logMiddle.Error(err)
 				var errResponse = map[string]interface{}{
 					"error":  err.(error).Error(),
 					"status": "error",

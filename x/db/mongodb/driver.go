@@ -9,7 +9,7 @@ func CheckAndInitServiceConnection() {
 		service.URL = PATH
 		err := service.New()
 		if err != nil {
-			logDB.Errorln(err)
+			logDB.Errorf("disconnected from %s", PATH)
 			panic(err)
 		}
 	}

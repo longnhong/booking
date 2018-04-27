@@ -2,6 +2,7 @@ package ticket_onl
 
 import (
 	"cetm_booking/o/auth/user"
+	"cetm_booking/o/notify"
 	"cetm_booking/o/rate"
 	"cetm_booking/x/db/mongodb"
 )
@@ -65,6 +66,20 @@ type TicketUpdate struct {
 	TypeTicket    TypeTicket `json:"type_ticket" bson:"type_ticket"`
 }
 
+type TicketDay struct {
+	*TicketBooking `bson:",inline"`
+	HourTimeGo     float32 `json:"hour_time_go" bson:"hour_time_go"`
+	IsUsedPush     bool
+	IsUsedNear     bool
+	IsUsedOut      bool
+	Customer       *user.User
+}
+
+type TicketSchedule struct {
+	IdBranch    string `json:"id" bson:"_id"`
+	CountPeople int    `json:"count" bson:"count"`
+}
+
 type TicketBookingCreate struct {
 	Customer      string     `bson:"customer" json:"customer"`
 	TimeGoBank    int64      `bson:"time_go_bank" json:"time_go_bank"`
@@ -95,11 +110,16 @@ const (
 )
 
 const (
-	BOOKING_STATE_CREATED   = BookingState("created")
-	BOOKING_STATE_CONFIRMED = BookingState("confirmed")
-	BOOKING_STATE_CANCELLED = BookingState("cancelled")
-	BOOKING_STATE_DELETE    = BookingState("deleted")
-	BOOKING_STATE_FINISHED  = BookingState("finished")
+	BOOKING_STATE_CREATED     = BookingState("created")
+	BOOKING_STATE_CONFIRMED   = BookingState("confirmed")
+	BOOKING_STATE_CANCELLED   = BookingState("cancelled")
+	BOOKING_STATE_DELETE      = BookingState("deleted")
+	BOOKING_STATE_FINISHED    = BookingState("finished")
+	BOOKING_STATE_NOT_ARRIVED = BookingState("not_arrived")
+	// CheckCode
+	BOOKING_STATE_CHECK_CODE = BookingState("check_code")
+	//customer update
+	BOOKING_CUSTOMER_UPDATE = BookingState("cus_update")
 )
 
 type TicketBranches struct {
@@ -110,4 +130,9 @@ type TicketBranches struct {
 type TicketUser struct {
 	TicketBooking `bson:",inline"`
 	Customer      *user.User `json:"customer" bson:"customer"`
+}
+
+type NotifyTicket struct {
+	Notify *notify.Notify `json:"notify"`
+	Ticket *TicketBooking `json:"ticket_booking"`
 }

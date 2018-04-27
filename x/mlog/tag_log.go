@@ -2,12 +2,10 @@ package mlog
 
 import (
 	"fmt"
-	"runtime"
-	"strings"
-
-	"runtime/debug"
-
 	"github.com/golang/glog"
+	"runtime"
+	"runtime/debug"
+	"strings"
 )
 
 type tagLog struct {

@@ -5,6 +5,7 @@ import (
 	"cetm_booking/x/config"
 	"cetm_booking/x/db/mongodb"
 	"cetm_booking/x/fcm"
+	"cetm_booking/x/mlog"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -63,6 +64,7 @@ func initConfigSytem() {
 	linkSearchMap, _ := context.String("server.map_search")
 	port, _ := context.String("server.port")
 	kmStr, _ := context.String("server.search_km")
+	mlog.SolutionDir, _ = context.String("server.folder_log")
 	km, _ := strconv.ParseFloat(kmStr, 64)
 	common.ConfigSystemBooking = common.ConfigSystem{
 		LinkCetm:      linkCetm,

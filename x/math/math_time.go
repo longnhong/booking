@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -393,4 +394,18 @@ func GetDayCount(dateStart int64, dateEnd int64) (dayCount int, dateTime1 time.T
 	fmt.Println(dateTime2)
 	dayCount = int(dateTime2.Sub(dateTime1).Hours() / 24)
 	return
+}
+
+func BeginAndEndDay(val int64) (start int64, end int64) {
+	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
+	var timeNow = time.Unix(val, 0).In(loc)
+	start = New(timeNow).BeginningOfDay().Unix()
+	end = New(timeNow).EndOfDay().Unix()
+	return
+}
+
+func TimeToString(val int64) string {
+	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
+	var timeNow = time.Unix(val, 0).In(loc)
+	return strconv.Itoa(timeNow.Hour()) + ":" + strconv.Itoa(timeNow.Minute())
 }

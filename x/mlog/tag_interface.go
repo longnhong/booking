@@ -1,8 +1,6 @@
 package mlog
 
-const (
-	SolutionDir = "G:/Solution/Golang/src/cetm_booking"
-)
+var SolutionDir string
 
 //IMLog : Log interface
 type IMLog interface {

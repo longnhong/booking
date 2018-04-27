@@ -2,6 +2,7 @@ package notify
 
 import (
 	"cetm_booking/x/rest"
+	"fmt"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -9,8 +10,13 @@ func (noti *Notify) CreateNotify() error {
 	return NotifyTable.Create(noti)
 }
 
+func (noti *Notify) RemoveNotify() error {
+	return NotifyTable.DeleteByID(noti.ID)
+}
+
 func UpdateRead(idNoti string) error {
-	var up = bson.M{"is_read": true}
+	fmt.Printf("ID NOTI", idNoti)
+	var up = bson.M{"is_readed": true}
 	return NotifyTable.UnsafeUpdateByID(idNoti, up)
 }
 

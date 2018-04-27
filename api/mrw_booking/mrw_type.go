@@ -12,14 +12,14 @@ type DataBank struct {
 }
 
 type InfoBank struct {
-	Lat                 float64     `json:"lat"`
-	Lng                 float64     `json:"lng"`
-	Address             string      `json:"address"`
-	KmScan              float64     `json:"km_scan"`
-	BranchID            string      `json:"branch_id"`
-	CountPeople         int         `json:"count_people"`
-	Services            interface{} `json:"services"`
-	CountCounterService int         `json:"count_counter_service"`
+	Lat                 float64 `json:"lat"`
+	Lng                 float64 `json:"lng"`
+	Address             string  `json:"address"`
+	KmScan              float64 `json:"km_scan"`
+	BranchID            string  `json:"branch_id"`
+	NameBranch          string  `json:"name"`
+	CountPeople         int     `json:"count_people"`
+	CountCounterService int     `json:"count_counter_service"`
 }
 
 /* DATA BANKS */

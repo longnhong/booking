@@ -5,10 +5,10 @@ import (
 	_ "cetm_booking/init"
 	// 2. iniit 2nd
 	"cetm_booking/api"
-	"cetm_booking/cache"
 	"cetm_booking/common"
 	"cetm_booking/middleware"
 	"cetm_booking/room"
+	"cetm_booking/system"
 	"cetm_booking/x/math"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -24,8 +24,9 @@ func main() {
 	//static
 	// router.StaticFS("/static", http.Dir("./upload"))
 	// router.StaticFS("/app", http.Dir("./app"))
+	system.Launch()
 	var timer, _ = math.NewDailyTimer("01:00", func() {
-		cache.GetTicketDayAndSendPush()
+		system.SetCacheTicketDay()
 	})
 	timer.Start()
 	//api

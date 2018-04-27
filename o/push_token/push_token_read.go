@@ -2,7 +2,6 @@ package push_token
 
 import (
 	"cetm_booking/x/rest"
-	"fmt"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -14,22 +13,32 @@ func GetByID(id string) (*PushToken, error) {
 	}, &auth)
 }
 
-func GetPushsUserId(userId string) ([]string, error) {
-	var pushs []string
-	var err = PushTokenTable.Find(bson.M{
-		"user_id": userId,
-	}).Distinct("push_token", &pushs)
-	fmt.Println(len(pushs))
-	return pushs, err
+type PushDevice struct {
+	ID         string   `json:"device_id" bson:"_id"`
+	PushTokens []string `json:"push_tokens" bson:"push_tokens"`
 }
 
-func GetPushsUserIds(userIds []string) ([]string, error) {
-	var pushs []string
-	var err = PushTokenTable.Find(bson.M{
-		"user_id": bson.M{"$in": userIds},
-	}).Distinct("push_token", &pushs)
-	fmt.Println(len(pushs))
-	return pushs, err
+func GetPushsUserId(userId string) ([]string, error) {
+	var pushs []*PushDevice
+	var queryMatch = bson.M{"user_id": userId}
+	var sortMatch = bson.M{"created_at": -1}
+	var group = bson.M{"_id": "$device_id", "push_tokens": bson.M{"$push": "$push_token"}}
+	var query = []bson.M{
+		{"$match": queryMatch},
+		{"$sort": sortMatch},
+		{"$group": group},
+	}
+	err := PushTokenTable.Pipe(query).All(&pushs)
+	if err != nil {
+		return nil, err
+	}
+	var pushTokens []string
+	for _, item := range pushs {
+		if len(item.PushTokens) > 0 {
+			pushTokens = append(pushTokens, item.PushTokens[0])
+		}
+	}
+	return pushTokens, nil
 }
 
 func GetFromToken(token string) *PushToken {

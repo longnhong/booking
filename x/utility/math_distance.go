@@ -1,4 +1,4 @@
-package utility
+package ultility
 
 import (
 	"math"

@@ -14,7 +14,9 @@ const (
 func CheckExist(collection *mgo.Collection, object interface{}, filter bson.M) error {
 	count, _ := collection.Find(filter).Count()
 	if count > 0 {
-		return errors.New("exists a unique field")
+		var err = errors.New("exists a unique field")
+		logDB.Errorf("disconnected from %s", err)
+		return err
 	}
 	return nil
 }

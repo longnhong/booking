@@ -1,0 +1,28 @@
+Log file created at: 2018/04/27 11:12:09
+Running on machine: VMCWin
+Binary: Built with gc go1.9 for windows/amd64
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0427 11:12:09.815674   11552 table.go:87] [MONGO_DB]   FindByID not found%!(EXTRA string="k_KhUYkY2PmaOUt211YR81sbaFVvf5Siu4wjU3BfRzFlqmwoyCNBdiO4hofA7nX271UPX4418BMVYJlsAJ")
+E0427 11:12:09.824683   11552 middleware.go:18] [middle] not found
+E0427 11:21:20.170390   11552 table.go:87] [MONGO_DB]   FindByID not found%!(EXTRA string="k_KhUYkY2PmaOUt211YR81sbaFVvf5Siu4wjU3BfRzFlqmwoyCNBdiO4hofA7nX271UPX4418BMVYJlsAJ")
+E0427 11:21:20.170891   11552 middleware.go:18] [middle] not found
+E0427 11:21:21.816085   11552 table.go:87] [MONGO_DB]   FindByID not found%!(EXTRA string="k_KhUYkY2PmaOUt211YR81sbaFVvf5Siu4wjU3BfRzFlqmwoyCNBdiO4hofA7nX271UPX4418BMVYJlsAJ")
+E0427 11:21:21.818087   11552 middleware.go:18] [middle] not found
+E0427 11:23:21.416151   11552 recover.go:10] runtime error: invalid memory address or nil pointer dereferencegoroutine 6 [running]:
+runtime/debug.Stack(0xc04206dbb8, 0xaa3920, 0xecf2e0)
+	C:/Go/src/runtime/debug/stack.go:24 +0xae
+cetm_booking/x/utils.Recover()
+	D:/Projects/Go/Project/src/cetm_booking/x/utils/recover.go:10 +0x61
+panic(0xaa3920, 0xecf2e0)
+	C:/Go/src/runtime/panic.go:491 +0x291
+cetm_booking/o/ticket_onl.(*TicketBooking).CrateTicketBooking(0x0, 0xc04201ed80, 0xc042042700, 0xc04235e310)
+	D:/Projects/Go/Project/src/cetm_booking/o/ticket_onl/bticket_cud.go:11 +0x69
+cetm_booking/system.(*TicketAction).HandlerAction(0xc042078100)
+	D:/Projects/Go/Project/src/cetm_booking/system/ticket_change.go:23 +0x70b
+cetm_booking/system.(*TicketWorker).TicketWorking(0xc042002de0, 0xc042078100, 0x0, 0x0)
+	D:/Projects/Go/Project/src/cetm_booking/system/ticket_ctrl.go:15 +0xaf
+cetm_booking/system.startCache(0xc042002de0)
+	D:/Projects/Go/Project/src/cetm_booking/system/start_sys.go:125 +0x18f
+created by cetm_booking/system.Launch
+	D:/Projects/Go/Project/src/cetm_booking/system/start_sys.go:19 +0x4d
+E0427 11:23:21.417151   11552 middleware.go:18] [middle] runtime error: invalid memory address or nil pointer dereference
