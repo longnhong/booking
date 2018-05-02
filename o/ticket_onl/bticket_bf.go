@@ -44,7 +44,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 }
 
 func CheckType(typeTK TypeTicket) error {
-	if typeTK != TYPE_NOW && typeTK != TYPE_SCHEDUCE {
+	if typeTK != TYPE_NOW && typeTK != TYPE_SCHEDULE {
 		return errTypeTicket
 	}
 	return nil

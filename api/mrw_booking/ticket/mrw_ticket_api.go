@@ -71,6 +71,7 @@ type resData struct {
 }
 
 type resTime struct {
+	ID         string                `json:"id"`
 	TimeGoBank int64                 `json:"time_go_bank"`
 	TypeTicket ticket_onl.TypeTicket `json:"type_ticket"`
 	ServiceID  string                `json:"service_id"`
@@ -83,11 +84,12 @@ func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 	var serviceID = request.URL.Query().Get("service_id")
 	var timeStart = web.MustGetInt64("start", request.URL.Query())
 	var timeEnd = web.MustGetInt64("end", request.URL.Query())
-	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID, timeStart, timeEnd)
+	var reslt, err = ticket_onl.GetTicketTimeInBranch(branchID, timeStart, timeEnd)
 
 	var result = make([]resTime, len(reslt))
 	for i, item := range reslt {
 		var res = resTime{
+			ID:         item.ID,
 			TimeGoBank: item.TimeGoBank,
 			TypeTicket: item.TypeTicket,
 			ServiceID:  item.ServiceID,

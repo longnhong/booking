@@ -15,7 +15,7 @@ func (s *TicketServer) handlerUpdateTicketCus(ctx *gin.Context) {
 	var tk, err = ticket_onl.GetByID(body.BTicketID)
 	rest.AssertNil(err)
 	var usr *user.User
-	if body.TypeTicket == ticket_onl.TYPE_NOW && tk.TypeTicket == ticket_onl.TYPE_SCHEDUCE {
+	if body.TypeTicket == ticket_onl.TYPE_NOW && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
 		usr, _ = auth.GetUserFromToken(ctx.Request)
 	} else {
 		auth.GetFromToken(ctx.Request)

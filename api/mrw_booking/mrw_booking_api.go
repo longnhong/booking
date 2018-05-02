@@ -49,7 +49,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 		rest.AssertNil(errors.New("Có lỗi xảy ra!"))
 	}
 	var result = res.Data
-	if body.TypeSearch == ticket_onl.TYPE_SCHEDUCE {
+	if body.TypeSearch == ticket_onl.TYPE_SCHEDULE {
 		branchIds := make([]string, len(result))
 		for i, item := range result {
 			branchIds[i] = item.BranchID

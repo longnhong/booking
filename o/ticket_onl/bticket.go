@@ -106,7 +106,7 @@ const (
 
 const (
 	TYPE_NOW      = TypeTicket("book_now")
-	TYPE_SCHEDUCE = TypeTicket("book_schedule")
+	TYPE_SCHEDULE = TypeTicket("book_schedule")
 )
 
 const (

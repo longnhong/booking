@@ -20,7 +20,7 @@ func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
 	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
 		countPP = CreateNumCetm(userTK, ticket)
 	} else {
-		var tks, _ = ticket_onl.GetAllTicketByTimeSearch(body.TimeGoBank)
+		var tks, _ = ticket_onl.GetAllTicketByTimeSearch(body.TimeGoBank, body.TypeTicket)
 		if tks != nil {
 			countPP = len(tks)
 		} else {

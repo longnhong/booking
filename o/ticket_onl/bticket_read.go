@@ -182,6 +182,19 @@ func GetTicketDayInBranch(branchID string, timeStart int64, timeEnd int64) (btks
 	err = TicketBookingTable.Pipe(query).All(&btks)
 	return btks, err
 }
+func GetTicketTimeInBranch(branchID string, timeStart int64, timeEnd int64) (btks []*TicketBooking, err error) {
+	var queryMatch = bson.M{
+		"branch_id": branchID,
+		"time_go_bank": bson.M{
+			"$gte": timeStart,
+			"$lte": timeEnd,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+
+	err = TicketBookingTable.FindWhere(queryMatch, &btks)
+	return btks, err
+}
 
 func GetAllTicketDay() (btks []*TicketBooking, err error) {
 	var timeBeginDay = math.BeginningOfDay().Unix()
@@ -196,7 +209,7 @@ func GetAllTicketDay() (btks []*TicketBooking, err error) {
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
 
-func GetAllTicketByTimeSearch(timeSearch int64) (btks []*TicketBooking, err error) {
+func GetAllTicketByTimeSearch(timeSearch int64, typeTicket TypeTicket) (btks []*TicketBooking, err error) {
 	var start, end = math.BeginAndEndDay(timeSearch)
 	var queryMatch = bson.M{
 		"time_go_bank": bson.M{
@@ -204,6 +217,9 @@ func GetAllTicketByTimeSearch(timeSearch int64) (btks []*TicketBooking, err erro
 			"$lte": end,
 		},
 		"status": BOOKING_STATE_CREATED,
+	}
+	if typeTicket == TYPE_SCHEDULE {
+		queryMatch["type_ticket"] = TYPE_SCHEDULE
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
