@@ -93,6 +93,7 @@ func getTicketSenPushOut() (ticketDays []*ticket_onl.TicketDay) {
 
 func sendPushOut() {
 	var tkDays = getTicketSenPushOut()
+	var ids = make([]string, 0)
 	for _, tk := range tkDays {
 		var cus, _ = push_token.GetPushsUserId(tk.CustomerID)
 		fmt.Printf("Số push", cus)
@@ -102,10 +103,11 @@ func sendPushOut() {
 				tk.IsUsedOut = true
 			}
 		}
+		ids = append(ids, tk.ID)
 		tk.Status = ticket_onl.BOOKING_STATE_NOT_ARRIVED
 	}
-	if len(tkDays) > 0 {
-		ticket_onl.UpdateStatusTickets(tkDays, ticket_onl.BOOKING_STATE_NOT_ARRIVED)
+	if len(ids) > 0 {
+		ticket_onl.UpdateStatusTickets(ids, ticket_onl.BOOKING_STATE_NOT_ARRIVED)
 	}
 }
 

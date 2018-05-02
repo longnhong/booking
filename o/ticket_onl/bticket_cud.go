@@ -43,8 +43,7 @@ func (tk *TicketBooking) MarkDeleteTicket() error {
 	return err
 }
 
-func UpdateStatusTickets(tks []*TicketDay, status BookingState) (error, int) {
-
+func UpdateStatusTickets(ids []string, status BookingState) (error, int) {
 	var newUp = map[string]interface{}{
 		"status": status,
 	}

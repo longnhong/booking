@@ -7,6 +7,7 @@ import (
 	"cetm_booking/o/rate"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/fcm"
+	"cetm_booking/x/math"
 	"cetm_booking/x/mlog"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/utility"
@@ -80,7 +81,9 @@ func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 	user.GetFromToken(request)
 	var branchID = request.URL.Query().Get("branch_id")
 	var serviceID = request.URL.Query().Get("service_id")
-	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID)
+	var timeStart = web.MustGetInt64("start", request.URL.Query())
+	var timeEnd = web.MustGetInt64("end", request.URL.Query())
+	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID, timeStart, timeEnd)
 
 	var result = make([]resTime, len(reslt))
 	for i, item := range reslt {
@@ -103,7 +106,9 @@ func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 func (s *TicketServer) handlerGetTicketsDay(ctx *gin.Context) {
 	var request = ctx.Request
 	var branchID = request.URL.Query().Get("branch_id")
-	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID)
+	var timeBeginDay = math.BeginningOfDay().Unix()
+	var tiemEnOfday = math.EndOfDay().Unix()
+	var reslt, err = ticket_onl.GetTicketDayInBranch(branchID, timeBeginDay, tiemEnOfday)
 	rest.AssertNil(err)
 	s.SendData(ctx, reslt)
 }

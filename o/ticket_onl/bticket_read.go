@@ -157,14 +157,12 @@ func (tk *TicketBooking) UpdateByCnumCetm(cnum string, idCetm string) error {
 	return err
 }
 
-func GetTicketDayInBranch(branchID string) (btks []*TicketUser, err error) {
-	var timeBeginDay = math.BeginningOfDay().Unix()
-	var tiemEnOfday = math.EndOfDay().Unix()
+func GetTicketDayInBranch(branchID string, timeStart int64, timeEnd int64) (btks []*TicketUser, err error) {
 	var queryMatch = bson.M{
 		"branch_id": branchID,
 		"time_go_bank": bson.M{
-			"$gte": timeBeginDay,
-			"$lte": tiemEnOfday,
+			"$gte": timeStart,
+			"$lte": timeEnd,
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
