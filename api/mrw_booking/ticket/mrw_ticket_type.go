@@ -11,13 +11,29 @@ type DataBank struct {
 }
 
 type InfoBank struct {
-	Lat                 float64       `json:"lat"`
-	Lng                 float64       `json:"lng"`
-	Address             string        `json:"address"`
-	BranchID            string        `json:"branch_id"`
-	CountPeople         int           `json:"count_people"`
-	CountCounterService int           `json:"count_counter_service"`
-	Counters            []interface{} `json:"counters"`
+	Lat                 float64   `json:"lat"`
+	Lng                 float64   `json:"lng"`
+	Address             string    `json:"address"`
+	BranchID            string    `json:"branch_id"`
+	CountPeople         int       `json:"count_people"`
+	CountCounterService int       `json:"count_counter_service"`
+	MaxServingMinute    int32     `json:"max_serving_minute"`
+	ServiceInCounters   []string  `json:"service_in_counters"`
+	Counters            []Counter `json:"counters"`
+}
+
+type Counter struct {
+	BranchID  string   `json:"branch_id"`
+	Cnum      string   `json:"cnum"`
+	Code      string   `json:"code"`
+	DevAddr   int      `json:"dev_addr"`
+	Dtime     int      `json:"dtime"`
+	ID        string   `json:"id"`
+	Mtime     int      `json:"mtime"`
+	Name      string   `json:"name"`
+	Pservices []string `json:"pservices"`
+	Services  []string `json:"services"`
+	Vservices []string `json:"vservices"`
 }
 
 type DataTicketCetm struct {

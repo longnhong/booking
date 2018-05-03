@@ -30,6 +30,7 @@ func (action *TicketAction) handlerAction() {
 			return
 		}
 		fmt.Printf("TICKET CREATE", data)
+		ticket.CustomerID = action.CusID
 		ticket, err := data.Ticket.CrateTicketBooking()
 		if err != nil {
 			action.SetError(err)

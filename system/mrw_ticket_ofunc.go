@@ -4,7 +4,7 @@ import (
 	"cetm_booking/o/notify"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/fcm"
-	"cetm_booking/x/rest"
+	//"cetm_booking/x/rest"
 )
 
 func sendFeedback(pDevices []string, tk *ticket_onl.TicketBooking, status ticket_onl.BookingState) {
@@ -25,7 +25,7 @@ func sendFeedback(pDevices []string, tk *ticket_onl.TicketBooking, status ticket
 		CustomerId:  tk.CustomerID,
 		State:       stateNotify,
 	}
-	rest.AssertNil(noti.CreateNotify())
+	noti.CreateNotify()
 	var notifyTk = ticket_onl.NotifyTicket{}
 	notifyTk.Notify = &noti
 	notifyTk.Ticket = tk
@@ -47,7 +47,7 @@ func sendFee(pDevice string, tk *ticket_onl.TicketBooking) {
 		CustomerId:  tk.CustomerID,
 		State:       notify.CETM_CREATE,
 	}
-	rest.AssertNil(noti.CreateNotify())
+	noti.CreateNotify()
 	var notifyTk = ticket_onl.NotifyTicket{}
 	notifyTk.Notify = &noti
 	notifyTk.Ticket = tk

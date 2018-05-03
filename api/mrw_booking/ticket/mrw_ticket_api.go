@@ -84,25 +84,13 @@ func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 	var serviceID = request.URL.Query().Get("service_id")
 	var timeStart = web.MustGetInt64("start", request.URL.Query())
 	var timeEnd = web.MustGetInt64("end", request.URL.Query())
-	var reslt, err = ticket_onl.GetTicketTimeInBranch(branchID, timeStart, timeEnd)
-
-	var result = make([]resTime, len(reslt))
-	for i, item := range reslt {
-		var res = resTime{
-			ID:         item.ID,
-			TimeGoBank: item.TimeGoBank,
-			TypeTicket: item.TypeTicket,
-			ServiceID:  item.ServiceID,
-		}
-		result[i] = res
-	}
-	rest.AssertNil(err)
-	var data = SearchBank(branchID, serviceID)
-	var res = map[string]interface{}{
-		"bank":    data,
-		"tickets": result,
-	}
+	var res = SetBankTickets(branchID, serviceID, timeStart, timeEnd)
 	s.SendData(ctx, res)
+}
+
+type bankTickets struct {
+	Bank    *InfoBank `json:"bank"`
+	Tickets []resTime `json:"tickets"`
 }
 
 func (s *TicketServer) handlerGetTicketsDay(ctx *gin.Context) {
@@ -175,6 +163,23 @@ func SearchBank(branchID string, serviceID string) *InfoBank {
 		rest.AssertNil(errors.New("Không tìm thấy Branch này!"))
 	}
 	return data.Data
+}
+
+func UpdateCounterTkCetm(userTK *oUser.User, ticket *ticket_onl.TicketBooking) (err error) {
+	var dataTicketSend = DataTicketSendCetm{
+		TicketBooking: ticket,
+		Customer:      userTK,
+	}
+	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/update_bticket"
+	var data = struct {
+		Data   interface{} `json:"data"`
+		Status string      `json:"status"`
+	}{}
+	rest.AssertNil(web.ResParamArrUrlClient(urlStr, dataTicketSend, &data))
+	if data.Status != "error" {
+		err = errors.New(data.Status)
+	}
+	return
 }
 
 func CreateTicket(tk *ticket_onl.TicketBooking) *InfoBank {

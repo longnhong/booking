@@ -18,3 +18,25 @@ func ActionChange(tkID string, cusId string, actionStatus ticket_onl.BookingStat
 	rest.AssertNil(rest.BadRequestValid(err))
 	return tk
 }
+
+func SetBankTickets(branchId string, serviceID string, timeStart int64, timeEnd int64) (bak *bankTickets) {
+	var reslt, err = ticket_onl.GetTicketTimeInBranch(branchId, timeStart, timeEnd)
+
+	var result = make([]resTime, len(reslt))
+	for i, item := range reslt {
+		var res = resTime{
+			ID:         item.ID,
+			TimeGoBank: item.TimeGoBank,
+			TypeTicket: item.TypeTicket,
+			ServiceID:  item.ServiceID,
+		}
+		result[i] = res
+	}
+	rest.AssertNil(err)
+	var data = SearchBank(branchId, serviceID)
+	bak = &bankTickets{
+		Bank:    data,
+		Tickets: result,
+	}
+	return
+}
