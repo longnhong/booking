@@ -6,6 +6,7 @@ import (
 	oUser "cetm_booking/o/auth/user"
 	"cetm_booking/o/rate"
 	"cetm_booking/o/ticket_onl"
+	"cetm_booking/system"
 	"cetm_booking/x/fcm"
 	"cetm_booking/x/math"
 	"cetm_booking/x/mlog"
@@ -41,7 +42,17 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.GET("/ticket_near", s.handlerTicketNear)
 	s.POST("/rate", s.handlerRate)
 	s.POST("/no_rate", s.handlerNoRate)
+	s.GET("/get_ticket", s.handlerGetTicket)
 	s.GET("/ticket_priority", s.handlerPrioritys)
+}
+
+func (s *TicketServer) handlerGetTicket(ctx *gin.Context) {
+	var request = ctx.Request
+	user.GetFromToken(request)
+	var btkID = request.URL.Query().Get("bticket_id")
+	tk, err := system.GetTicketByID(btkID)
+	rest.AssertNil(err)
+	s.SendData(ctx, tk)
 }
 
 func (s *TicketServer) handlerPrioritys(ctx *gin.Context) {

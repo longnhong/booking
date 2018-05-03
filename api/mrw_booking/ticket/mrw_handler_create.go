@@ -14,6 +14,7 @@ func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
 	var userTK, push = auth.GetUserFromToken(ctx.Request)
 	var body = ticket_onl.TicketBookingCreate{}
 	rest.AssertNil(ctx.BindJSON(&body))
+	body.CustomerID = userTK.ID
 	var extra, _ = json.Marshal(map[string]interface{}{
 		"ticket":     body,
 		"push_token": push.PushToken})
