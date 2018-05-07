@@ -25,7 +25,7 @@ func main() {
 	// router.StaticFS("/static", http.Dir("./upload"))
 	// router.StaticFS("/app", http.Dir("./app"))
 	system.Launch()
-	var timer, _ = math.NewDailyTimer("01:00", func() {
+	var timer, _ = math.NewDailyTimer(common.ConfigSystemBooking.TimeSetCache, func() {
 		system.SetCacheTicketDay()
 	})
 	timer.Start()

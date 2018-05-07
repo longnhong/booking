@@ -4,6 +4,7 @@ type ConfigSystem struct {
 	LinkCetm      string
 	LinkSearchMap string
 	PortBooking   string
+	TimeSetCache  string
 	KmSearch      float64
 }
 

@@ -64,6 +64,7 @@ func initConfigSytem() {
 	linkSearchMap, _ := context.String("server.map_search")
 	port, _ := context.String("server.port")
 	kmStr, _ := context.String("server.search_km")
+	timeSet, _ := context.String("server.time_set_cache")
 	mlog.SolutionDir, _ = context.String("server.folder_log")
 	km, _ := strconv.ParseFloat(kmStr, 64)
 	common.ConfigSystemBooking = common.ConfigSystem{
@@ -71,5 +72,6 @@ func initConfigSytem() {
 		LinkSearchMap: linkSearchMap,
 		PortBooking:   port,
 		KmSearch:      km,
+		TimeSetCache:  timeSet,
 	}
 }

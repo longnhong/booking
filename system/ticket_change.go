@@ -84,14 +84,14 @@ func (action *TicketAction) handlerAction() {
 	case ticket_onl.BOOKING_STATE_CHECK_CODE:
 		var data = struct {
 			CustomerCode string `json:"customer_code"`
-			BranchId     string `json:"branch_id"`
+			BranchID     string `json:"branch_id"`
 		}{}
 		var err1 = json.Unmarshal(action.Extra, &data)
 		if err1 != nil {
 			action.SetError(err1)
 			return
 		}
-		var ticket, err = ticket_onl.CheckCustomerCode(data.CustomerCode, data.BranchId)
+		var ticket, err = ticket_onl.CheckCustomerCode(data.CustomerCode, data.BranchID)
 		if err != nil {
 			action.SetError(err)
 			return
