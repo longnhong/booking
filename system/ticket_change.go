@@ -47,7 +47,7 @@ func (action *TicketAction) handlerAction() {
 		ticket.Status = ticket_onl.BOOKING_STATE_DELETE
 		action.Ticket = ticket
 	case ticket_onl.BOOKING_STATE_CANCELLED:
-		fallthrough
+		//fallthrough
 	case ticket_onl.BOOKING_STATE_FINISHED:
 		var data *ticket_onl.UpdateCetm
 		var err = json.Unmarshal(action.Extra, &data)

@@ -266,3 +266,28 @@ func UpdateRate(id string, numRate TypeRate) (err error) {
 	rest.IsErrorRecord(err)
 	return
 }
+
+func GetTicketReport(branchIds []string, timeStart int64, timeEnd int64) (btks []*TicketUser, err error) {
+	var queryMatch = bson.M{
+		"branch_id": bson.M{"$in": branchIds},
+		"created_at": bson.M{
+			"$gte": timeStart,
+			"$lte": timeEnd,
+		},
+	}
+	var query = []bson.M{}
+	var joinUser = bson.M{
+		"from":         "user",
+		"localField":   "customer_id",
+		"foreignField": "_id",
+		"as":           "customer",
+	}
+	var unWindCus = "$customer"
+	query = []bson.M{
+		{"$match": queryMatch},
+		{"$lookup": joinUser},
+		{"$unwind": unWindCus},
+	}
+	err = TicketBookingTable.Pipe(query).All(&btks)
+	return btks, err
+}

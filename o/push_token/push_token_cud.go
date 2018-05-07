@@ -17,7 +17,7 @@ func (tok *PushToken) CratePushToken() *PushToken {
 }
 
 func UpdatePushToken(tokenStr string) error {
-	var res, err = CheckTokenRevoke(tokenStr)
+	var res, err = checkTokenRevoke(tokenStr)
 	if err != nil && err.Error() != common.NOT_EXIST {
 		rest.AssertNil(err)
 	}

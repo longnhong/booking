@@ -1,6 +1,7 @@
 package api
 
 import (
+	"cetm_booking/api/admin"
 	"cetm_booking/api/auth"
 	"cetm_booking/api/mrw_booking"
 	"github.com/gin-gonic/gin"
@@ -8,5 +9,6 @@ import (
 
 func InitApi(root *gin.RouterGroup) {
 	mrw_booking.NewBookingServer(root, "booking")
+	admin.NewAdminServer(root, "admin")
 	auth.NewAuthenServer(root, "auth")
 }
