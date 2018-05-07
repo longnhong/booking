@@ -67,11 +67,35 @@ func initConfigSytem() {
 	timeSet, _ := context.String("server.time_set_cache")
 	mlog.SolutionDir, _ = context.String("server.folder_log")
 	km, _ := strconv.ParseFloat(kmStr, 64)
+
+	startDaySendStr, _ := context.String("server.send_notify_start_day")
+	startDaySend, _ := strconv.ParseFloat(startDaySendStr, 64)
+	bfHourSendStr, _ := context.String("server.send_notify_bf_hour")
+	bfHourSend, _ := strconv.ParseFloat(bfHourSendStr, 64)
+
+	startNearStr, _ := context.String("server.start_near")
+	startNear, _ := strconv.ParseFloat(startNearStr, 64)
+
+	endNearStr, _ := context.String("server.end_near")
+	endNear, _ := strconv.ParseFloat(endNearStr, 64)
+
+	startOutStr, _ := context.String("server.start_out")
+	startOut, _ := strconv.ParseFloat(startOutStr, 64)
+
+	endOutStr, _ := context.String("server.end_out")
+	endOut, _ := strconv.ParseFloat(endOutStr, 64)
+
 	common.ConfigSystemBooking = common.ConfigSystem{
-		LinkCetm:      linkCetm,
-		LinkSearchMap: linkSearchMap,
-		PortBooking:   port,
-		KmSearch:      km,
-		TimeSetCache:  timeSet,
+		LinkCetm:           linkCetm,
+		LinkSearchMap:      linkSearchMap,
+		PortBooking:        port,
+		KmSearch:           km,
+		TimeSetCache:       timeSet,
+		SendNotifyBfHour:   bfHourSend,
+		SendNotifyStartDay: startDaySend,
+		StartNear:          startNear,
+		EndNear:            endNear,
+		StartOut:           startOut,
+		EndOut:             endOut,
 	}
 }

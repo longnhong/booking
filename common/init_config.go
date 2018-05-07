@@ -1,11 +1,17 @@
 package common
 
 type ConfigSystem struct {
-	LinkCetm      string
-	LinkSearchMap string
-	PortBooking   string
-	TimeSetCache  string
-	KmSearch      float64
+	LinkCetm           string
+	LinkSearchMap      string
+	PortBooking        string
+	TimeSetCache       string
+	KmSearch           float64
+	SendNotifyStartDay float64
+	SendNotifyBfHour   float64
+	StartNear          float64
+	EndNear            float64
+	StartOut           float64
+	EndOut             float64
 }
 
 var ConfigSystemBooking = ConfigSystem{}

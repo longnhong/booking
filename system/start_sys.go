@@ -1,6 +1,7 @@
 package system
 
 import (
+	"cetm_booking/common"
 	"cetm_booking/o/notify"
 	"cetm_booking/o/push_token"
 	"cetm_booking/o/ticket_onl"
@@ -44,8 +45,9 @@ func getTicketSenPush() {
 	var tkDays = TicketWorkerDay.TicketCaches
 	var timeNow = math.HourMinute()
 	for _, tk := range tkDays {
-		var timeRes = tk.HourTimeGo - timeNow
-		if !tk.IsUsedPush && 3 >= timeRes && timeRes >= 0 && tk.Status == ticket_onl.BOOKING_STATE_CREATED && timeNow >= 7 {
+		var timeRes = float64(tk.HourTimeGo - timeNow)
+		if !tk.IsUsedPush && common.ConfigSystemBooking.SendNotifyBfHour >= timeRes && timeRes >= 0 &&
+			tk.Status == ticket_onl.BOOKING_STATE_CREATED && float64(timeNow) >= common.ConfigSystemBooking.SendNotifyStartDay {
 			var cus, _ = push_token.GetPushsUserId(tk.CustomerID)
 			if len(cus) > 0 {
 				err := sendPushTicketDay(cus, tk.TicketBooking)
@@ -62,8 +64,9 @@ func getTicketSenPushNear() {
 	var tkDays = TicketWorkerDay.TicketCaches
 	var timeNow = math.HourMinute()
 	for _, tk := range tkDays {
-		var timeRes = tk.HourTimeGo - timeNow
-		if !tk.IsUsedNear && 0.5 >= timeRes && timeRes >= 0.25 && tk.Status == ticket_onl.BOOKING_STATE_CREATED && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
+		var timeRes = float64(tk.HourTimeGo - timeNow)
+		if !tk.IsUsedNear && common.ConfigSystemBooking.StartNear >= timeRes && timeRes >= common.ConfigSystemBooking.EndNear &&
+			tk.Status == ticket_onl.BOOKING_STATE_CREATED && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
 			var cus, _ = push_token.GetPushsUserId(tk.CustomerID)
 			fmt.Printf("Số push", cus)
 			if len(cus) > 0 {
@@ -82,8 +85,8 @@ func getTicketSenPushOut() (ticketDays []*ticket_onl.TicketDay) {
 	var tkDays = TicketWorkerDay.TicketCaches
 	var timeNow = math.HourMinute()
 	for _, tk := range tkDays {
-		var timeRes = tk.HourTimeGo - timeNow
-		if !tk.IsUsedNear && -0.25 > timeRes && timeRes >= -0.5 &&
+		var timeRes = float64(timeNow - tk.HourTimeGo)
+		if !tk.IsUsedNear && common.ConfigSystemBooking.StartOut > timeRes && timeRes >= common.ConfigSystemBooking.StartOut &&
 			tk.Status == ticket_onl.BOOKING_STATE_CREATED && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
 			ticketDays = append(ticketDays, tk)
 		}
