@@ -5,9 +5,7 @@ const (
 	NOT_EXIST       = "not found" // không có data
 )
 
-type TypePayment int
-
-const (
-	TYPE_PAYMENT_CARD  = TypePayment(1) // kiểu thanh toán theo thẻ
-	TYPE_PAYMENT_MONEY = TypePayment(2) //Thanh toán theo trả lương
-)
+type Location struct {
+	Lat float64 `json:"lat"`
+	Lng float64 `json:"lng"`
+}

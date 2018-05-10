@@ -12,6 +12,9 @@ type ConfigSystem struct {
 	EndNear            float64
 	StartOut           float64
 	EndOut             float64
+	ScanNear           float64
+	CyclePushDay       int
+	CyclePushTicket    int
 }
 
 var ConfigSystemBooking = ConfigSystem{}

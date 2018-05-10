@@ -2,8 +2,9 @@ package mrw_booking
 
 import (
 	"cetm_booking/api/mrw_booking/notify"
-	ticket "cetm_booking/api/mrw_booking/ticket"
+	"cetm_booking/api/mrw_booking/ticket"
 	"cetm_booking/common"
+	ctrl "cetm_booking/ctrl_to_cetm"
 	user "cetm_booking/o/auth"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/rest"
@@ -33,7 +34,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	var body = struct {
 		KmScan       float64               `json:"km_scan"`
 		ServiceID    string                `json:"service_id"`
-		AddressBanks []*AddressBank        `json:"address_banks"`
+		AddressBanks []*ctrl.AddressBank   `json:"address_banks"`
 		TimeStart    int64                 `json:"time_start"`
 		TimeEnd      int64                 `json:"time_end"`
 		TypeSearch   ticket_onl.TypeTicket `json:"type_ticket"`
@@ -43,7 +44,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_banks"
 	var kmScan = common.ConfigSystemBooking.KmSearch
 	body.KmScan = kmScan
-	var res *Data
+	var res *ctrl.Data
 	rest.AssertNil(web.ResParamArrUrlClient(urlStr, &body, &res))
 	if res.Status == "error" {
 		rest.AssertNil(errors.New("Có lỗi xảy ra!"))
@@ -76,7 +77,7 @@ func (s *BookingServer) handleService(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	fmt.Println("CETM: " + common.ConfigSystemBooking.LinkCetm)
 	var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_services"
-	var res *DataServices
+	var res *ctrl.DataServices
 	rest.AssertNil(web.ResUrlClientGet(url, &res))
 	s.SendData(ctx, &res.Data)
 }

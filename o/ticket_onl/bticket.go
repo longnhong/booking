@@ -117,7 +117,8 @@ const (
 	BOOKING_STATE_FINISHED    = BookingState("finished")
 	BOOKING_STATE_NOT_ARRIVED = BookingState("not_arrived")
 	// CheckCode
-	BOOKING_STATE_CHECK_CODE = BookingState("check_code")
+	BOOKING_STATE_CHECK_CODE  = BookingState("check_code")
+	BOOKING_STATE_CREATE_CETM = BookingState("create_cetm")
 	//customer update
 	BOOKING_CUSTOMER_UPDATE = BookingState("cus_update")
 )

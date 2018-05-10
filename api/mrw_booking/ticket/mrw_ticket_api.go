@@ -1,9 +1,8 @@
 package ticket
 
 import (
-	"cetm_booking/common"
+	ctrl "cetm_booking/ctrl_to_cetm"
 	user "cetm_booking/o/auth"
-	oUser "cetm_booking/o/auth/user"
 	"cetm_booking/o/rate"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/system"
@@ -11,10 +10,9 @@ import (
 	"cetm_booking/x/math"
 	"cetm_booking/x/mlog"
 	"cetm_booking/x/rest"
-	"cetm_booking/x/utility"
+	"cetm_booking/x/ultility"
 	"cetm_booking/x/web"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,6 +42,7 @@ func NewTicketServer(parent *gin.RouterGroup, name string) {
 	s.POST("/no_rate", s.handlerNoRate)
 	s.GET("/get_ticket", s.handlerGetTicket)
 	s.GET("/ticket_priority", s.handlerPrioritys)
+	s.POST("/crate_tkcetm", s.handlerCreateTkCetm)
 }
 
 func (s *TicketServer) handlerGetTicket(ctx *gin.Context) {
@@ -76,18 +75,6 @@ func (s *TicketServer) handlerTicketNear(ctx *gin.Context) {
 	s.SendData(ctx, tks)
 }
 
-type resData struct {
-	*ticket_onl.TicketBooking
-	CountPeople int `json:"count_people"`
-}
-
-type resTime struct {
-	ID         string                `json:"id"`
-	TimeGoBank int64                 `json:"time_go_bank"`
-	TypeTicket ticket_onl.TypeTicket `json:"type_ticket"`
-	ServiceID  string                `json:"service_id"`
-}
-
 func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 	var request = ctx.Request
 	user.GetFromToken(request)
@@ -95,13 +82,14 @@ func (s *TicketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 	var serviceID = request.URL.Query().Get("service_id")
 	var timeStart = web.MustGetInt64("start", request.URL.Query())
 	var timeEnd = web.MustGetInt64("end", request.URL.Query())
-	var res = SetBankTickets(branchID, serviceID, timeStart, timeEnd)
+	var res, err = SetBankTickets(branchID, serviceID, timeStart, timeEnd)
+	rest.AssertNil(err)
 	s.SendData(ctx, res)
 }
 
 type bankTickets struct {
-	Bank    *InfoBank `json:"bank"`
-	Tickets []resTime `json:"tickets"`
+	Bank    *ctrl.InfoBank `json:"bank"`
+	Tickets []resTime      `json:"tickets"`
 }
 
 func (s *TicketServer) handlerGetTicketsDay(ctx *gin.Context) {
@@ -149,7 +137,8 @@ func (s *TicketServer) handlerLoction(ctx *gin.Context) {
 	rest.AssertNil(ctx.BindJSON(&body))
 	var bTk, err = ticket_onl.CheckTicketByDay(userTK.ID)
 	rest.AssertNil(err)
-	var data = SearchBank(bTk.BranchID, "")
+	var data, err1 = ctrl.SearchBank(bTk.BranchID, "")
+	rest.AssertNil(err1)
 	if data == nil {
 		rest.AssertNil(errors.New("Thử lại! Bạn đang không trong khu vực ngân hàng!"))
 	}
@@ -164,54 +153,4 @@ func (s *TicketServer) handlerLoction(ctx *gin.Context) {
 		rest.AssertNil(errors.New("Thử lại! Bạn đang không trong khu vực ngân hàng!"))
 	}
 
-}
-
-func SearchBank(branchID string, serviceID string) *InfoBank {
-	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_bank?branch_id=" + branchID + "&service_id=" + serviceID
-	var data *DataBank
-	rest.AssertNil(web.ResUrlClientGet(urlStr, &data))
-	if data.Status.Status == "error" {
-		rest.AssertNil(errors.New("Không tìm thấy Branch này!"))
-	}
-	return data.Data
-}
-
-func UpdateCounterTkCetm(userTK *oUser.User, ticket *ticket_onl.TicketBooking) (err error) {
-	var dataTicketSend = DataTicketSendCetm{
-		TicketBooking: ticket,
-		Customer:      userTK,
-	}
-	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/update_bticket"
-	var data = struct {
-		Data   interface{} `json:"data"`
-		Status string      `json:"status"`
-	}{}
-	rest.AssertNil(web.ResParamArrUrlClient(urlStr, dataTicketSend, &data))
-	if data.Status != "error" {
-		err = errors.New(data.Status)
-	}
-	return
-}
-
-func CreateTicket(tk *ticket_onl.TicketBooking) *InfoBank {
-	var urlStr = common.ConfigSystemBooking.LinkCetm + "/room/booking/system_add_bkticket"
-	var data *DataBank
-	rest.AssertNil(web.ResUrlClientGet(urlStr, &data))
-	if data.Status.Status == "error" {
-		rest.AssertNil(errors.New("Không tìm thấy Branch này!"))
-	}
-	return data.Data
-}
-
-func CreateNumCetm(userTK *oUser.User, ticket *ticket_onl.TicketBooking) (countPP int) {
-	var dataTicketSend = DataTicketSendCetm{
-		TicketBooking: ticket,
-		Customer:      userTK,
-	}
-	var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/system_add_bkticket"
-	var data = DataTicketBookNow{}
-	rest.AssertNil(web.ResParamArrUrlClient(url, dataTicketSend, &data))
-	ticket.UpdateByCnumCetm(data.Data.Cnum, data.Data.Id)
-	fmt.Printf("Data tao ve ", data.Data)
-	return data.Data.CountPeople
 }

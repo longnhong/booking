@@ -1,6 +1,7 @@
 package ticket
 
 import (
+	ctrl "cetm_booking/ctrl_to_cetm"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/system"
 	"cetm_booking/x/mrw/encode"
@@ -19,9 +20,11 @@ func ActionChange(tkID string, cusId string, actionStatus ticket_onl.BookingStat
 	return tk
 }
 
-func SetBankTickets(branchId string, serviceID string, timeStart int64, timeEnd int64) (bak *bankTickets) {
+func SetBankTickets(branchId string, serviceID string, timeStart int64, timeEnd int64) (*bankTickets, error) {
 	var reslt, err = ticket_onl.GetTicketTimeInBranch(branchId, timeStart, timeEnd)
-
+	if err != nil {
+		return nil, err
+	}
 	var result = make([]resTime, len(reslt))
 	for i, item := range reslt {
 		var res = resTime{
@@ -32,11 +35,9 @@ func SetBankTickets(branchId string, serviceID string, timeStart int64, timeEnd 
 		}
 		result[i] = res
 	}
-	rest.AssertNil(err)
-	var data = SearchBank(branchId, serviceID)
-	bak = &bankTickets{
-		Bank:    data,
-		Tickets: result,
+	data, err := ctrl.SearchBank(branchId, serviceID)
+	if err != nil {
+		return nil, err
 	}
-	return
+	return &bankTickets{Bank: data, Tickets: result}, nil
 }

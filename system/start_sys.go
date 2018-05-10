@@ -21,7 +21,6 @@ func Launch() {
 
 func SetCacheTicketDay() {
 	var tickets, _ = ticket_onl.GetAllTicketDay()
-	TicketWorkerDay = newCacheTicketWorker()
 	var timeNow = math.GetTimeNowVietNam()
 	for _, item := range tickets {
 		if math.CompareDayTime(timeNow, item.TimeGoBank) == 0 {
@@ -115,13 +114,12 @@ func sendPushOut() {
 }
 
 func startCache(c *ticketWorker) {
-	every15Minute := time.Tick(1 * time.Minute)
-	every2Minute := time.Tick(2 * time.Minute)
+	every15Minute := time.Tick(time.Duration(common.ConfigSystemBooking.CyclePushDay) * time.Minute)
+	//every2Minute := time.Tick(time.Duration(common.ConfigSystemBooking.CyclePushTicket) * time.Minute)
 	for {
 		select {
 		case <-every15Minute:
 			getTicketSenPush()
-		case <-every2Minute:
 			getTicketSenPushNear()
 			sendPushOut()
 		case action := <-c.TicketUpdate:

@@ -180,6 +180,7 @@ func GetTicketDayInBranch(branchID string, timeStart int64, timeEnd int64) (btks
 		{"$unwind": unWindCus},
 	}
 	err = TicketBookingTable.Pipe(query).All(&btks)
+	rest.IsErrorRecord(err)
 	return btks, err
 }
 func GetTicketTimeInBranch(branchID string, timeStart int64, timeEnd int64) (btks []*TicketBooking, err error) {
@@ -200,6 +201,20 @@ func GetAllTicketDay() (btks []*TicketBooking, err error) {
 	var timeBeginDay = math.BeginningOfDay().Unix()
 	var tiemEnOfday = math.EndOfDay().Unix()
 	var queryMatch = bson.M{
+		"time_go_bank": bson.M{
+			"$gte": timeBeginDay,
+			"$lte": tiemEnOfday,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
+}
+
+func GetTicketDayByUser(cusId string) (btks []*TicketBooking, err error) {
+	var timeBeginDay = math.BeginningOfDay().Unix()
+	var tiemEnOfday = math.EndOfDay().Unix()
+	var queryMatch = bson.M{
+		"customer_id": cusId,
 		"time_go_bank": bson.M{
 			"$gte": timeBeginDay,
 			"$lte": tiemEnOfday,

@@ -23,9 +23,10 @@ func GetUserByID(userID string) *user.User {
 	return usr
 }
 
-func GetFromToken(r *http.Request) {
+func GetFromToken(r *http.Request) (psh *push_token.PushToken) {
 	var token = web.GetToken(r)
-	push_token.GetFromToken(token)
+	psh = push_token.GetFromToken(token)
+	return
 }
 
 type LoginUser struct {

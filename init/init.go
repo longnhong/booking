@@ -85,6 +85,12 @@ func initConfigSytem() {
 	endOutStr, _ := context.String("server.end_out")
 	endOut, _ := strconv.ParseFloat(endOutStr, 64)
 
+	cyclePushDay := context.IntDefault("server.cycle_push_day", 0)
+	cyclePushTicket := context.IntDefault("server.cycle_push_ticket", 0)
+
+	scanNearStr, _ := context.String("server.scan_near")
+	scanNear, _ := strconv.ParseFloat(scanNearStr, 64)
+
 	common.ConfigSystemBooking = common.ConfigSystem{
 		LinkCetm:           linkCetm,
 		LinkSearchMap:      linkSearchMap,
@@ -97,5 +103,8 @@ func initConfigSytem() {
 		EndNear:            endNear,
 		StartOut:           startOut,
 		EndOut:             endOut,
+		ScanNear:           scanNear,
+		CyclePushDay:       cyclePushDay,
+		CyclePushTicket:    cyclePushTicket,
 	}
 }

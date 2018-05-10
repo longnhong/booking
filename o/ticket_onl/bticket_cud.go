@@ -1,8 +1,6 @@
 package ticket_onl
 
 import (
-	"cetm_booking/x/rest"
-	"errors"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -15,19 +13,22 @@ func (tkbkCreate *TicketBookingCreate) CrateTicketBooking() (*TicketBooking, err
 	return tkbk, err
 }
 
-func (tkbk *TicketUpdate) UpdateTicketBookingByCustomer() (tk *TicketBooking) {
-	var err = TicketBookingTable.FindByID(tkbk.BTicketID, &tk)
-	if err != nil || tk == nil {
-		rest.AssertNil(errors.New("Không tồn tại vé này!"))
+func (tkit *TicketBooking) UpdateTicketBookingByCustomer(tkbk *TicketUpdate) (*TicketBooking, error) {
+	err := tkbk.updateBf()
+	if err != nil {
+		return nil, err
 	}
-	rest.AssertNil(tkbk.updateBf())
-	rest.AssertNil(TicketBookingTable.UnsafeUpdateByID(tkbk.BTicketID, tkbk))
-	tk.TimeGoBank = tkbk.TimeGoBank
-	tk.ServiceID = tkbk.ServiceID
-	tk.BranchID = tkbk.BranchID
-	tk.TypeTicket = tkbk.TypeTicket
-	tk.UpdatedAt = tkbk.UpdatedAt
-	return
+	err = TicketBookingTable.UnsafeUpdateByID(tkbk.BTicketID, tkbk)
+	if err != nil {
+		return nil, err
+	}
+	tkit.TimeGoBank = tkbk.TimeGoBank
+	tkit.ServiceID = tkbk.ServiceID
+	tkit.ServiceName = tkbk.ServiceName
+	tkit.BranchID = tkbk.BranchID
+	tkit.TypeTicket = tkbk.TypeTicket
+	tkit.UpdatedAt = tkbk.UpdatedAt
+	return tkit, nil
 }
 
 func (upC *UpdateCetm) UpdateTicketBookingByCetm() error {
