@@ -91,6 +91,8 @@ func initConfigSytem() {
 	scanNearStr, _ := context.String("server.scan_near")
 	scanNear, _ := strconv.ParseFloat(scanNearStr, 64)
 
+	tkDay := context.IntDefault("server.user_ticket_day", 0)
+
 	common.ConfigSystemBooking = common.ConfigSystem{
 		LinkCetm:           linkCetm,
 		LinkSearchMap:      linkSearchMap,
@@ -106,5 +108,6 @@ func initConfigSytem() {
 		ScanNear:           scanNear,
 		CyclePushDay:       cyclePushDay,
 		CyclePushTicket:    cyclePushTicket,
+		UserTicketDay:      tkDay,
 	}
 }

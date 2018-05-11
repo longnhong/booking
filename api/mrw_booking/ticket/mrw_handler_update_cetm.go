@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *TicketServer) handlerUpdateTicketCetm(ctx *gin.Context) {
+func (s *ticketServer) handlerUpdateTicketCetm(ctx *gin.Context) {
 	var body = ticket_onl.UpdateCetm{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)

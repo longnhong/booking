@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *TicketServer) handlerDeleteTicket(ctx *gin.Context) {
+func (s *ticketServer) handlerDeleteTicket(ctx *gin.Context) {
 	fmt.Println("DELETE TICKET")
 	auth.GetFromToken(ctx.Request)
 	var body = struct {

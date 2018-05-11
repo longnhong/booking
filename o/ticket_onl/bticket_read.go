@@ -81,7 +81,7 @@ func GetAllTicketCus(customerId string) (btks []*RateTicket, err error) {
 	return btks, TicketBookingTable.Pipe(query).All(&btks)
 }
 
-func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
+func CheckTicketByDay(customerId string) (btks []*TicketBooking, err error) {
 	var timeBeginDay = math.BeginningOfDay().Unix()
 	var tiemEnOfday = math.EndOfDay().Unix()
 	var queryMatch = bson.M{
@@ -92,7 +92,8 @@ func CheckTicketByDay(customerId string) (btks *TicketBooking, err error) {
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
-	return btks, TicketBookingTable.FindOne(queryMatch, &btks)
+	err = TicketBookingTable.FindOne(queryMatch, &btks)
+	return btks, rest.IsErrorRecord(err)
 }
 
 func GetTicketNear(customerId string) (btk *RateTicket, err error) {

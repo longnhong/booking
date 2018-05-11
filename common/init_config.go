@@ -15,6 +15,7 @@ type ConfigSystem struct {
 	ScanNear           float64
 	CyclePushDay       int
 	CyclePushTicket    int
+	UserTicketDay      int
 }
 
 var ConfigSystemBooking = ConfigSystem{}

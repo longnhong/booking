@@ -22,10 +22,11 @@ func (tkit *TicketBooking) UpdateTicketBookingByCustomer(tkbk *TicketUpdate) (*T
 	if err != nil {
 		return nil, err
 	}
+	tkit.BranchAddress = tkbk.BranchAddress
+	tkit.BranchID = tkbk.BranchID
 	tkit.TimeGoBank = tkbk.TimeGoBank
 	tkit.ServiceID = tkbk.ServiceID
 	tkit.ServiceName = tkbk.ServiceName
-	tkit.BranchID = tkbk.BranchID
 	tkit.TypeTicket = tkbk.TypeTicket
 	tkit.UpdatedAt = tkbk.UpdatedAt
 	return tkit, nil

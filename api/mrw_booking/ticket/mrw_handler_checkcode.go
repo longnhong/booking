@@ -11,12 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *TicketServer) handlerCheckCode(ctx *gin.Context) {
+func (s *ticketServer) handlerCheckCode(ctx *gin.Context) {
 	//var usrTk = user.GetUserFromToken(ctx.Request)
 	fmt.Println("CHECK CODE")
 	var body = struct {
 		CustomerCode string `json:"customer_code"`
-		BranchId     string `json:"branch_id"`
+		BranchID     string `json:"branch_id"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)

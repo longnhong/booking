@@ -1,6 +1,7 @@
 package ticket
 
 import (
+	"cetm_booking/common"
 	ctrl "cetm_booking/ctrl_to_cetm"
 	"cetm_booking/o/auth"
 	"cetm_booking/o/ticket_onl"
@@ -24,13 +25,14 @@ type resTime struct {
 	ServiceID  string                `json:"service_id"`
 }
 
-func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
+func (s *ticketServer) handlerCreateTicket(ctx *gin.Context) {
 	fmt.Println("CREATE TICKET")
 	var userTK, push = auth.GetUserFromToken(ctx.Request)
 	var body = ticket_onl.TicketBookingCreate{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	rest.AssertNil(validate(body))
-	body.CustomerID = userTK.ID
+	var cusID = userTK.ID
+	rest.AssertNil(validate(body, cusID))
+	body.CustomerID = cusID
 	var extra, _ = json.Marshal(map[string]interface{}{
 		"ticket":     body,
 		"push_token": push.PushToken})
@@ -59,6 +61,7 @@ func (s *TicketServer) handlerCreateTicket(ctx *gin.Context) {
 }
 
 var errOutTicket = errors.New("Đã hết chỗ trong thời gian này! Vui lòng đặt vào giờ khác!")
+var errOutTkDay = errors.New("Bạn đã hết số lần vé trong ngày hôm nay!")
 
 func ValidateTicket(body ticket_onl.TicketBookingCreate) error {
 	var serviceID = body.ServiceID
@@ -87,10 +90,10 @@ func ValidateTicket(body ticket_onl.TicketBookingCreate) error {
 		var countOSerIn int
 		for _, ser := range tkOrthers {
 			for _, cou := range btks.Bank.Counters {
-				var couId = cou.ID
+				var couID = cou.ID
 				for _, serC := range cou.Services {
 					if ser == serC {
-						if _, ok := arrCounter[couId]; ok {
+						if _, ok := arrCounter[couID]; ok {
 							countOSerIn++
 						} else {
 							countOSerOut++
@@ -109,9 +112,16 @@ func ValidateTicket(body ticket_onl.TicketBookingCreate) error {
 	return nil
 }
 
-func validate(body ticket_onl.TicketBookingCreate) error {
+func validate(body ticket_onl.TicketBookingCreate, cusID string) error {
+	var tks, err = ticket_onl.CheckTicketByDay(cusID)
+	if err != nil {
+		return err
+	}
+	if len(tks) >= common.ConfigSystemBooking.UserTicketDay {
+		return errOutTkDay
+	}
 	var serviceID = body.ServiceID
-	var btks, err = SetBankTickets(body.BranchID, serviceID, body.TimeGoBank, body.TimeGoBank)
+	btks, err := SetBankTickets(body.BranchID, serviceID, body.TimeGoBank, body.TimeGoBank)
 	if err != nil {
 		return err
 	}

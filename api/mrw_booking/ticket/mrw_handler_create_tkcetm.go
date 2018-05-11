@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *TicketServer) handlerCreateTkCetm(ctx *gin.Context) {
+func (s *ticketServer) handlerCreateTkCetm(ctx *gin.Context) {
 	fmt.Println("CREATE TICKET CETM")
 	var userTK, _ = auth.GetUserFromToken(ctx.Request)
 	var body *common.Location
