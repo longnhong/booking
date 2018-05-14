@@ -92,7 +92,7 @@ func CheckTicketByDay(customerId string) (btks []*TicketBooking, err error) {
 		},
 		"status": BOOKING_STATE_CREATED,
 	}
-	err = TicketBookingTable.FindOne(queryMatch, &btks)
+	err = TicketBookingTable.FindWhere(queryMatch, &btks)
 	return btks, rest.IsErrorRecord(err)
 }
 

@@ -42,7 +42,8 @@ func (s *ticketServer) handlerCreateTicket(ctx *gin.Context) {
 	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
 		countPP, _ = ctrl.CreateNumCetm(userTK, ticket)
 	} else {
-		var tks, _ = ticket_onl.GetAllTicketByTimeSearch(body.TimeGoBank, body.TypeTicket)
+		var tks, err = ticket_onl.GetAllTicketByTimeSearch(body.TimeGoBank, body.TypeTicket)
+		fmt.Printf("Voo schedule", err)
 		if tks != nil {
 			countPP = len(tks)
 		} else {
