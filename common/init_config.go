@@ -5,6 +5,7 @@ type ConfigSystem struct {
 	LinkSearchMap      string
 	PortBooking        string
 	TimeSetCache       string
+	CycleDayMissed     string
 	KmSearch           float64
 	SendNotifyStartDay float64
 	SendNotifyBfHour   float64

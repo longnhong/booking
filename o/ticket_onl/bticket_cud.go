@@ -1,6 +1,7 @@
 package ticket_onl
 
 import (
+	"cetm_booking/x/math"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -50,5 +51,21 @@ func UpdateStatusTickets(ids []string, status BookingState) (error, int) {
 		"status": status,
 	}
 	var rest, err = TicketBookingTable.UpdateAll(bson.M{"_id": bson.M{"$in": ids}}, bson.M{"$set": newUp})
+	return err, rest.Updated
+}
+
+func UpdateMissedTickets() (error, int) {
+	var timeNow = math.GetTimeNowVietNam()
+	var queryMatch = bson.M{
+		"time_go_bank": bson.M{
+			"$lte": timeNow,
+		},
+		"status": BOOKING_STATE_CREATED,
+	}
+	var newUp = map[string]interface{}{
+		"status":     BOOKING_STATE_NOT_ARRIVED,
+		"updated_at": timeNow,
+	}
+	var rest, err = TicketBookingTable.UpdateAll(queryMatch, bson.M{"$set": newUp})
 	return err, rest.Updated
 }

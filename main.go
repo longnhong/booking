@@ -25,10 +25,16 @@ func main() {
 	// router.StaticFS("/static", http.Dir("./upload"))
 	// router.StaticFS("/app", http.Dir("./app"))
 	system.Launch()
+	var timer1, _ = math.NewDailyTimer(common.ConfigSystemBooking.CycleDayMissed, func() {
+		system.CycleDayMissed()
+	})
+	timer1.Start()
+
 	var timer, _ = math.NewDailyTimer(common.ConfigSystemBooking.TimeSetCache, func() {
 		system.SetCacheTicketDay()
 	})
 	timer.Start()
+
 	//api
 	rootAPI := router.Group("/api")
 	api.InitApi(rootAPI)

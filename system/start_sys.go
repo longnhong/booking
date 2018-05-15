@@ -19,6 +19,10 @@ func Launch() {
 	go startCache(TicketWorkerDay)
 }
 
+func CycleDayMissed() {
+	ticket_onl.UpdateMissedTickets()
+}
+
 func SetCacheTicketDay() {
 	var tickets, _ = ticket_onl.GetAllTicketDay()
 	var timeNow = math.GetTimeNowVietNam()

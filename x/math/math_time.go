@@ -404,6 +404,12 @@ func BeginAndEndDay(val int64) (start int64, end int64) {
 	return
 }
 
+func BeginAndEndDayNow() (start int64, end int64) {
+	start = BeginningOfDay().Unix()
+	end = EndOfDay().Unix()
+	return
+}
+
 func TimeToString(val int64) string {
 	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	var timeNow = time.Unix(val, 0).In(loc)
