@@ -13,6 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var errOutTicket = rest.BadRequestValid(errors.New("Đã hết chỗ trong thời gian này! Vui lòng đặt vào giờ khác!"))
+var errOutTkDay = rest.BadRequestValid(errors.New("Bạn đã hết số lần vé trong ngày hôm nay!"))
+
 type resData struct {
 	*ticket_onl.TicketBooking
 	CountPeople int `json:"count_people"`
@@ -37,7 +40,7 @@ func (s *ticketServer) handlerCreateTicket(ctx *gin.Context) {
 		"ticket":     body,
 		"push_token": push.PushToken})
 
-	var ticket = ActionChange("", userTK.ID, ticket_onl.BOOKING_STATE_CREATED, extra)
+	var ticket = actionChange("", userTK.ID, ticket_onl.BOOKING_STATE_CREATED, extra)
 	var countPP int
 	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
 		countPP, _ = ctrl.CreateNumCetm(userTK, ticket)
@@ -61,12 +64,9 @@ func (s *ticketServer) handlerCreateTicket(ctx *gin.Context) {
 	s.SendData(ctx, res)
 }
 
-var errOutTicket = errors.New("Đã hết chỗ trong thời gian này! Vui lòng đặt vào giờ khác!")
-var errOutTkDay = errors.New("Bạn đã hết số lần vé trong ngày hôm nay!")
-
-func ValidateTicket(body ticket_onl.TicketBookingCreate) error {
+func validateTicket(body ticket_onl.TicketBookingCreate) error {
 	var serviceID = body.ServiceID
-	var btks, err1 = SetBankTickets(body.BranchID, serviceID, body.TimeGoBank, body.TimeGoBank)
+	var btks, err1 = setBankTickets(body.BranchID, serviceID, body.TimeGoBank, body.TimeGoBank)
 	if err1 != nil {
 		return err1
 	}
@@ -122,7 +122,7 @@ func validate(body ticket_onl.TicketBookingCreate, cusID string) error {
 		return errOutTkDay
 	}
 	var serviceID = body.ServiceID
-	btks, err := SetBankTickets(body.BranchID, serviceID, body.TimeGoBank, body.TimeGoBank)
+	btks, err := setBankTickets(body.BranchID, serviceID, body.TimeGoBank, body.TimeGoBank)
 	if err != nil {
 		return err
 	}

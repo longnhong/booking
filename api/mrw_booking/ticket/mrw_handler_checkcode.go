@@ -20,7 +20,7 @@ func (s *ticketServer) handlerCheckCode(ctx *gin.Context) {
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)
-	var ticket = ActionChange("", "", ticket_onl.BOOKING_STATE_CHECK_CODE, extra)
+	var ticket = actionChange("", "", ticket_onl.BOOKING_STATE_CHECK_CODE, extra)
 	if ticket == nil {
 		rest.AssertNil(errors.New("Code sai"))
 	}

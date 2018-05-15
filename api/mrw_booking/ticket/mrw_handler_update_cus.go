@@ -14,7 +14,7 @@ func (s *ticketServer) handlerUpdateTicketCus(ctx *gin.Context) {
 	var body = ticket_onl.TicketUpdate{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)
-	var ticket = ActionChange(body.BTicketID, "", ticket_onl.BOOKING_CUSTOMER_UPDATE, extra)
+	var ticket = actionChange(body.BTicketID, "", ticket_onl.BOOKING_CUSTOMER_UPDATE, extra)
 	var usr *user.User
 	if body.TypeTicket == ticket_onl.TYPE_NOW && ticket.TypeTicket == ticket_onl.TYPE_SCHEDULE {
 		usr, _ = auth.GetUserFromToken(ctx.Request)

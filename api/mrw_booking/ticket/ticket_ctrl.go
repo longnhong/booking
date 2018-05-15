@@ -8,9 +8,9 @@ import (
 	"ehelp/x/rest"
 )
 
-func ActionChange(tkID string, cusId string, actionStatus ticket_onl.BookingState, extra encode.RawMessage) *ticket_onl.TicketBooking {
+func actionChange(tkID string, cusID string, actionStatus ticket_onl.BookingState, extra encode.RawMessage) *ticket_onl.TicketBooking {
 	var action = system.NewTicketAction()
-	action.CusID = cusId
+	action.CusID = cusID
 	action.TicketID = tkID
 	action.Action = actionStatus
 	action.Extra = extra
@@ -20,8 +20,8 @@ func ActionChange(tkID string, cusId string, actionStatus ticket_onl.BookingStat
 	return tk
 }
 
-func SetBankTickets(branchId string, serviceID string, timeStart int64, timeEnd int64) (*bankTickets, error) {
-	var reslt, err = ticket_onl.GetTicketTimeInBranch(branchId, timeStart, timeEnd)
+func setBankTickets(branchID string, serviceID string, timeStart int64, timeEnd int64) (*bankTickets, error) {
+	var reslt, err = ticket_onl.GetTicketTimeInBranch(branchID, timeStart, timeEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func SetBankTickets(branchId string, serviceID string, timeStart int64, timeEnd 
 		}
 		result[i] = res
 	}
-	data, err := ctrl.SearchBank(branchId, serviceID)
+	data, err := ctrl.SearchBank(branchID, serviceID)
 	if err != nil {
 		return nil, err
 	}

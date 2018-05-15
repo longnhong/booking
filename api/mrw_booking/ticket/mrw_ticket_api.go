@@ -18,7 +18,7 @@ type ticketServer struct {
 	rest.JsonRender
 }
 
-var logApi = mlog.NewTagLog("ticket_API")
+var logAPI = mlog.NewTagLog("ticket_API")
 
 func NewTicketServer(parent *gin.RouterGroup, name string) {
 	var s = ticketServer{
@@ -78,7 +78,7 @@ func (s *ticketServer) handlerGetTicketDayInBranch(ctx *gin.Context) {
 	var serviceID = request.URL.Query().Get("service_id")
 	var timeStart = web.MustGetInt64("start", request.URL.Query())
 	var timeEnd = web.MustGetInt64("end", request.URL.Query())
-	var res, err = SetBankTickets(branchID, serviceID, timeStart, timeEnd)
+	var res, err = setBankTickets(branchID, serviceID, timeStart, timeEnd)
 	rest.AssertNil(err)
 	s.SendData(ctx, res)
 }
@@ -119,7 +119,7 @@ func (s *ticketServer) handlerRate(ctx *gin.Context) {
 func (s *ticketServer) handlerNoRate(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	var body *rate.Rate
-	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TYPE_RATED)
+	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TYPE_NO_RATE)
 	rest.AssertNil(err)
 	s.SendData(ctx, nil)
 }

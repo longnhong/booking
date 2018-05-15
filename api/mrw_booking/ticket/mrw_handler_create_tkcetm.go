@@ -17,7 +17,7 @@ func (s *ticketServer) handlerCreateTkCetm(ctx *gin.Context) {
 	var body *common.Location
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)
-	var ticket = ActionChange("", userTK.ID, ticket_onl.BOOKING_STATE_CREATE_CETM, extra)
+	var ticket = actionChange("", userTK.ID, ticket_onl.BOOKING_STATE_CREATE_CETM, extra)
 	ctrl.CreateNumCetm(userTK, ticket)
 	s.SendData(ctx, ticket)
 }
