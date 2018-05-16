@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 )
 
-func (action *TicketAction) CusUpdate(ticket *ticket_onl.TicketBooking) {
+func (action *TicketAction) cusUpdate(ticket *ticket_onl.TicketBooking) {
 	var data *ticket_onl.TicketUpdate
 	err := json.Unmarshal(action.Extra, &data)
 	if err != nil {

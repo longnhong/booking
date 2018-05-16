@@ -21,6 +21,7 @@ func Launch() {
 
 func CycleDayMissed() {
 	ticket_onl.UpdateMissedTickets()
+	removeTksTicketWorkerDay()
 }
 
 func SetCacheTicketDay() {
@@ -123,9 +124,12 @@ func startCache(c *ticketWorker) {
 	for {
 		select {
 		case <-every15Minute:
-			getTicketSenPush()
-			getTicketSenPushNear()
-			sendPushOut()
+			var timeNow = math.HourMinute()
+			if timeNow > 5 && timeNow < 23 {
+				getTicketSenPush()
+				getTicketSenPushNear()
+				sendPushOut()
+			}
 		case action := <-c.TicketUpdate:
 			c.TicketWorking(action)
 		}

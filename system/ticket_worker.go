@@ -36,10 +36,14 @@ func (tw *ticketWorker) OnActionDone() (event.Line, event.Cancel) {
 	return tw.doneAction.NewLine()
 }
 
-func RemoveTksTicketWorkerDay() {
-	if TicketWorkerDay != nil && len(TicketWorkerDay.TicketCaches) > 0 {
-		for k := range TicketWorkerDay.TicketCaches {
-			delete(TicketWorkerDay.TicketCaches, k)
+func removeTksTicketWorkerDay() {
+	if TicketWorkerDay == nil {
+		if len(TicketWorkerDay.TicketCaches) > 0 {
+			for k := range TicketWorkerDay.TicketCaches {
+				delete(TicketWorkerDay.TicketCaches, k)
+			}
 		}
+	} else {
+		TicketWorkerDay = newCacheTicketWorker()
 	}
 }

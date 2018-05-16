@@ -5,10 +5,13 @@ import (
 	ctrl "cetm_booking/ctrl_to_cetm"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/x/math"
+	"cetm_booking/x/rest"
 	"cetm_booking/x/ultility"
 	"encoding/json"
-	"errors"
 )
+
+var errOut = rest.BadRequestValidString("Vé của bạn chưa đến hoặc quá giờ! Vui lòng kiếm tra lại!")
+var errOutLoc = rest.BadRequestValidString("Bạn đang không trong phạm vi ngân hàng!")
 
 func (action *TicketAction) actionCreateCetm() {
 	var btks, err = ticket_onl.GetTicketDayByUser(action.CusID)
@@ -29,7 +32,7 @@ func (action *TicketAction) actionCreateCetm() {
 		}
 	}
 	if ticket == nil {
-		err = errors.New("Vé của bạn chưa đến hoặc quá giờ! Vui lòng kiếm tra lại!")
+		err = errOut
 		action.SetError(err)
 		return
 	}
@@ -46,7 +49,7 @@ func (action *TicketAction) actionCreateCetm() {
 	}
 	var scanKm = ultility.Haversine(data.Lat, data.Lng, bank.Lat, bank.Lng)
 	if scanKm > common.ConfigSystemBooking.ScanNear {
-		err = errors.New("Bạn đang không trong phạm vi ngân hàng!")
+		err = errOutLoc
 		action.SetError(err)
 		return
 	}

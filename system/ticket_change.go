@@ -32,7 +32,7 @@ func (action *TicketAction) handlerAction() {
 	case ticket_onl.BOOKING_STATE_CREATE_CETM:
 		action.actionCreateCetm()
 	case ticket_onl.BOOKING_CUSTOMER_UPDATE:
-		action.CusUpdate(ticket)
+		action.cusUpdate(ticket)
 	default:
 		err := errors.New("No Action")
 		action.SetError(err)
