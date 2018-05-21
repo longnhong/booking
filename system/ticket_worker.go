@@ -5,45 +5,41 @@ import (
 	"cetm_booking/x/mrw/event"
 )
 
-type ticketWorker struct {
+type TicketWorker struct {
 	TicketCaches map[string]*ticket_onl.TicketDay
 	TicketUpdate chan *TicketAction
 	doneAction   *event.Hub
 }
 
-func (tw *ticketWorker) TriggerTicketAction(action *TicketAction) {
+func (tw *TicketWorker) TriggerTicketAction(action *TicketAction) {
 	tw.TicketUpdate <- action
 }
 
-var TicketWorkerDay = newCacheTicketWorker()
-
-func newCacheTicketWorker() *ticketWorker {
-	return &ticketWorker{
+func newCacheTicketWorker() *TicketWorker {
+	return &TicketWorker{
 		TicketCaches: make(map[string]*ticket_onl.TicketDay, 0),
 		TicketUpdate: make(chan *TicketAction, event.MediumHub),
 	}
 }
 
-func GetTicketByID(idTicket string) (*ticket_onl.TicketBooking, error) {
-	if tk, ok := TicketWorkerDay.TicketCaches[idTicket]; ok {
+func (tkDay *TicketWorker) GetTicketByID(idTicket string) (*ticket_onl.TicketBooking, error) {
+	if tk, ok := tkDay.TicketCaches[idTicket]; ok {
 		return tk.TicketBooking, nil
 	}
 	ticket, err := ticket_onl.GetByID(idTicket)
 	return ticket, err
 }
 
-func (tw *ticketWorker) OnActionDone() (event.Line, event.Cancel) {
+func (tw *TicketWorker) OnActionDone() (event.Line, event.Cancel) {
 	return tw.doneAction.NewLine()
 }
 
-func removeTksTicketWorkerDay() {
-	if TicketWorkerDay == nil {
-		if len(TicketWorkerDay.TicketCaches) > 0 {
-			for k := range TicketWorkerDay.TicketCaches {
-				delete(TicketWorkerDay.TicketCaches, k)
+func (tkDay *TicketWorker) removeTksTicketWorkerDay() {
+	if tkDay == nil {
+		if len(tkDay.TicketCaches) > 0 {
+			for k := range tkDay.TicketCaches {
+				delete(tkDay.TicketCaches, k)
 			}
 		}
-	} else {
-		TicketWorkerDay = newCacheTicketWorker()
 	}
 }

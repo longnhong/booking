@@ -4,7 +4,7 @@ type ConfigSystem struct {
 	LinkCetm           string
 	LinkSearchMap      string
 	PortBooking        string
-	TimeSetCache       string
+	TimeSetCache       int
 	CycleDayMissed     string
 	KmSearch           float64
 	SendNotifyStartDay float64

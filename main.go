@@ -9,7 +9,6 @@ import (
 	"cetm_booking/middleware"
 	"cetm_booking/room"
 	"cetm_booking/system"
-	"cetm_booking/x/math"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,20 +23,12 @@ func main() {
 	//static
 	// router.StaticFS("/static", http.Dir("./upload"))
 	// router.StaticFS("/app", http.Dir("./app"))
-	system.Launch()
-	var timer1, _ = math.NewDailyTimer(common.ConfigSystemBooking.CycleDayMissed, func() {
-		system.CycleDayMissed()
-	})
-	timer1.Start()
-
-	var timer, _ = math.NewDailyTimer(common.ConfigSystemBooking.TimeSetCache, func() {
-		system.SetCacheTicketDay()
-	})
-	timer.Start()
+	var tkWorker = system.Start()
+	tkWorker.Launch()
 
 	//api
 	rootAPI := router.Group("/api")
-	api.InitApi(rootAPI)
+	api.InitApi(rootAPI, tkWorker)
 	//ws
 	room.NewRoomServer(router.Group("/room"))
 	router.Run(common.ConfigSystemBooking.PortBooking)

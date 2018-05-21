@@ -16,13 +16,15 @@ import (
 type ticketServer struct {
 	*gin.RouterGroup
 	rest.JsonRender
+	*system.TicketWorker
 }
 
 var logAPI = mlog.NewTagLog("ticket_API")
 
-func NewTicketServer(parent *gin.RouterGroup, name string) {
+func NewTicketServer(parent *gin.RouterGroup, name string, tkWorker *system.TicketWorker) {
 	var s = ticketServer{
-		RouterGroup: parent.Group(name),
+		RouterGroup:  parent.Group(name),
+		TicketWorker: tkWorker,
 	}
 	s.POST("/create", s.handlerCreateTicket)
 	s.GET("/my_schedule", s.handlerMySchedule)
@@ -45,7 +47,7 @@ func (s *ticketServer) handlerGetTicket(ctx *gin.Context) {
 	var request = ctx.Request
 	user.GetFromToken(request)
 	var btkID = request.URL.Query().Get("bticket_id")
-	tk, err := system.GetTicketByID(btkID)
+	tk, err := s.TicketWorker.GetTicketByID(btkID)
 	rest.AssertNil(err)
 	s.SendData(ctx, tk)
 }

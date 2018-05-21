@@ -7,6 +7,7 @@ import (
 	ctrl "cetm_booking/ctrl_to_cetm"
 	user "cetm_booking/o/auth"
 	"cetm_booking/o/ticket_onl"
+	"cetm_booking/system"
 	"cetm_booking/x/rest"
 	"cetm_booking/x/web"
 	"errors"
@@ -19,13 +20,13 @@ type BookingServer struct {
 	rest.JsonRender
 }
 
-func NewBookingServer(parent *gin.RouterGroup, name string) {
+func NewBookingServer(parent *gin.RouterGroup, name string, tkWorker *system.TicketWorker) {
 	var s = BookingServer{
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/search_branchs", s.handlerSearchs)
 	s.GET("/search_services", s.handleService)
-	ticket.NewTicketServer(s.RouterGroup, "ticket")
+	ticket.NewTicketServer(s.RouterGroup, "ticket", tkWorker)
 	notify.NewNotifyServer(s.RouterGroup, "notify")
 }
 

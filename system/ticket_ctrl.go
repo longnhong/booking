@@ -9,15 +9,27 @@ import (
 	"fmt"
 )
 
-func (c *ticketWorker) TicketWorking(action *TicketAction) error {
+func (c *TicketWorker) TicketWorking(action *TicketAction) error {
 	fmt.Printf("\nTICKET ACTION", action)
 	if action == nil {
 		return nil
 	}
 	defer utils.Recover()
 	defer action.Done()
-	action.handlerAction()
-	var err = action.GetError()
+	var ticket *ticket_onl.TicketBooking
+	var err error
+	var tkAction = action.Action
+	if tkAction != ticket_onl.BOOKING_STATE_CREATED &&
+		tkAction != ticket_onl.BOOKING_STATE_CHECK_CODE &&
+		tkAction != ticket_onl.BOOKING_STATE_CREATE_CETM {
+		ticket, err = c.GetTicketByID(action.TicketID)
+		if err != nil {
+			action.SetError(err)
+			return err
+		}
+	}
+	action.handlerAction(ticket)
+	err = action.GetError()
 	if err == nil {
 		var timegoBank = action.Ticket.TimeGoBank
 		if action.Action == ticket_onl.BOOKING_STATE_CREATED && math.CompareDayTime(math.GetTimeNowVietNam(), timegoBank) == 0 {
@@ -28,6 +40,10 @@ func (c *ticketWorker) TicketWorking(action *TicketAction) error {
 				HourTimeGo:    hourDay,
 			}
 			c.TicketCaches[action.Ticket.ID] = &tkDay
+		} else if tkAction == ticket_onl.BOOKING_STATE_CHECK_CODE {
+			if val, ok := c.TicketCaches[action.Ticket.ID]; ok {
+				val.TicketBooking = action.Ticket
+			}
 		}
 	}
 	return err
@@ -73,6 +89,7 @@ func sendFee(pDevice string, tk *ticket_onl.TicketBooking) {
 		CustomerId:  tk.CustomerID,
 		State:       notify.CETM_CREATE,
 	}
+	noti.CreatedAt = math.GetTimeNowVietNam().Unix()
 	noti.CreateNotify()
 	var notifyTk = ticket_onl.NotifyTicket{}
 	notifyTk.Notify = &noti

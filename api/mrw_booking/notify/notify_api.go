@@ -22,6 +22,26 @@ func NewNotifyServer(parent *gin.RouterGroup, name string) {
 	}
 	s.POST("/read", s.handlerReadNotify)
 	s.GET("/get", s.handlerGetNotify)
+	s.GET("/get_readnt", s.handlerGetNoRead)
+	s.POST("/update_reads", s.handlerUpdateReadeds)
+}
+
+func (s *NotifyServer) handlerGetNoRead(ctx *gin.Context) {
+	var psh = auth.GetFromToken(ctx.Request)
+	var count, err = notify.CountNotifyNoRead(psh.UserId)
+	rest.AssertNil(err)
+	s.SendData(ctx, count)
+}
+
+func (s *NotifyServer) handlerUpdateReadeds(ctx *gin.Context) {
+	var psh = auth.GetFromToken(ctx.Request)
+	var body = struct {
+		Ids []string `json:"notify_ids"`
+	}{}
+	rest.AssertNil(ctx.BindJSON(&body))
+	var err = notify.UpdateNotifyReaded(psh.UserId, body.Ids)
+	rest.AssertNil(err)
+	s.SendData(ctx, nil)
 }
 
 func (s *NotifyServer) handlerGetNotify(ctx *gin.Context) {

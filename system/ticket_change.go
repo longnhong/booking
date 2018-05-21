@@ -5,17 +5,7 @@ import (
 	"errors"
 )
 
-func (action *TicketAction) handlerAction() {
-	var ticket *ticket_onl.TicketBooking
-	var err error
-	var tkAction = action.Action
-	if tkAction != ticket_onl.BOOKING_STATE_CREATED && tkAction != ticket_onl.BOOKING_STATE_CHECK_CODE && tkAction != ticket_onl.BOOKING_STATE_CREATE_CETM {
-		ticket, err = GetTicketByID(action.TicketID)
-		if err != nil {
-			action.SetError(err)
-			return
-		}
-	}
+func (action *TicketAction) handlerAction(ticket *ticket_onl.TicketBooking) {
 	switch action.Action {
 	case ticket_onl.BOOKING_STATE_CREATED:
 		action.actionCreate()

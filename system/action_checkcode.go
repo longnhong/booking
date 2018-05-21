@@ -22,7 +22,4 @@ func (action *TicketAction) actionCheckCode() {
 	}
 	ticket.UpdateTimeCheckIn()
 	action.Ticket = ticket
-	if val, ok := TicketWorkerDay.TicketCaches[ticket.ID]; ok {
-		val.TicketBooking = ticket
-	}
 }

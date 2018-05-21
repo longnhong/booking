@@ -64,7 +64,7 @@ func initConfigSytem() {
 	linkSearchMap, _ := context.String("server.map_search")
 	port, _ := context.String("server.port")
 	kmStr, _ := context.String("server.search_km")
-	timeSet, _ := context.String("server.time_set_cache")
+	timeSet := context.IntDefault("server.time_set_cache", 0)
 	mlog.SolutionDir, _ = context.String("server.folder_log")
 	km, _ := strconv.ParseFloat(kmStr, 64)
 

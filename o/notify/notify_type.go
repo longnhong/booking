@@ -15,9 +15,11 @@ type Notify struct {
 	IsReaded          bool        `bson:"is_readed" json:"is_readed"`
 	BticketID         string      `bson:"bticket_id" json:"bticket_id"`
 	State             StateNotify `bson:"state" json:"state"`
+	TypeNotify        TypeNotify  `bson:"type_notify" json:"type_notify"`
 }
 
 type StateNotify string
+type TypeNotify string
 
 const (
 	CETM_CANCELLED    = StateNotify("cetm_cancelled")
@@ -26,4 +28,7 @@ const (
 	CETM_SCHEDULE_DAY = StateNotify("schedule_day")
 	CETM_NOT_ARRIVED  = StateNotify("not_arrived")
 	CETM_NEAR_HOUR    = StateNotify("near_hour")
+	TYPE_WARNING      = TypeNotify("warning")
+	TYPE_NOTIFY       = TypeNotify("notify")
+	TYPE_PROMOTION    = TypeNotify("promotion")
 )

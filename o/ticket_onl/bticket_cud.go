@@ -55,7 +55,7 @@ func UpdateStatusTickets(ids []string, status BookingState) (error, int) {
 }
 
 func UpdateMissedTickets() (error, int) {
-	var timeNow = math.GetTimeNowVietNam()
+	var timeNow = math.GetTimeNowVietNam().Unix()
 	var queryMatch = bson.M{
 		"time_go_bank": bson.M{
 			"$lte": timeNow,

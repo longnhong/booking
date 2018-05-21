@@ -36,11 +36,13 @@ func (t *dailyTimer) Start() {
 type Timer struct {
 	timer   *time.Timer
 	handler func()
+	C       chan time.Time
 }
 
 func NewTimer(handler func()) *Timer {
 	return &Timer{
 		handler: handler,
+		C:       make(chan time.Time, 16),
 	}
 }
 
