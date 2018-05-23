@@ -17,7 +17,7 @@ func (c *Collection) Connect() {
 
 func NewCollectionSession(name string) *Collection {
 	var c = Collection{
-		db:   newDBSession(DBNAME),
+		db:   newDBSession(MongoConfig.DBname),
 		name: name,
 	}
 	c.Connect()
@@ -25,7 +25,7 @@ func NewCollectionSession(name string) *Collection {
 }
 func NewCollection(name string) *mgo.Collection {
 	var c = Collection{
-		db:   newDBSession(DBNAME),
+		db:   newDBSession(MongoConfig.DBname),
 		name: name,
 	}
 	c.Connect()

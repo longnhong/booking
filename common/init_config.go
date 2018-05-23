@@ -19,4 +19,11 @@ type ConfigSystem struct {
 	UserTicketDay      int
 }
 
+type DB struct {
+	DbName string
+	DbUser string
+	DbPass string
+}
+
+var DBConfig = DB{}
 var ConfigSystemBooking = ConfigSystem{}

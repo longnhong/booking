@@ -30,6 +30,7 @@ func (tkit *TicketBooking) UpdateTicketBookingByCustomer(tkbk *TicketUpdate) (*T
 	tkit.ServiceName = tkbk.ServiceName
 	tkit.TypeTicket = tkbk.TypeTicket
 	tkit.UpdatedAt = tkbk.UpdatedAt
+	tkit.BranchName = tkbk.BranchName
 	return tkit, nil
 }
 

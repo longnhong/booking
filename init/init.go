@@ -47,9 +47,11 @@ func initLog() {
 func initDB() {
 	fmt.Println("init db")
 	// Read configuration.
-	mongodb.MaxPool = context.IntDefault("mongo.maxPool", 0)
-	mongodb.PATH, _ = context.String("mongo.path")
-	mongodb.DBNAME, _ = context.String("mongo.database")
+	mongodb.MongoConfig.MaxPool = context.IntDefault("mongo.maxPool", 0)
+	mongodb.MongoConfig.Path, _ = context.String("mongo.path")
+	mongodb.MongoConfig.DBname, _ = context.String("mongo.database")
+	mongodb.MongoConfig.DBUser, _ = context.String("mongo.db_user")
+	mongodb.MongoConfig.DBPass, _ = context.String("mongo.db_pass")
 	mongodb.CheckAndInitServiceConnection()
 }
 

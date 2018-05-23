@@ -1,15 +1,23 @@
 package mongodb
 
-var MaxPool int
-var PATH string
-var DBNAME string
+type mongoDBConfig struct {
+	MaxPool int
+	Path    string
+	DBname  string
+	DBUser  string
+	DBPass  string
+}
+
+var MongoConfig = mongoDBConfig{}
 
 func CheckAndInitServiceConnection() {
 	if service.baseSession == nil {
-		service.URL = PATH
+		service.URL = MongoConfig.Path
+		service.DbUser = MongoConfig.DBUser
+		service.DbPass = MongoConfig.DBPass
 		err := service.New()
 		if err != nil {
-			logDB.Errorf("disconnected from %s", PATH)
+			logDB.Errorf("disconnected from %s", MongoConfig.Path)
 			panic(err)
 		}
 	}

@@ -11,7 +11,7 @@ type InfoBank struct {
 	Address             string    `json:"address"`
 	KmScan              float64   `json:"km_scan"`
 	BranchID            string    `json:"branch_id"`
-	NameBranch          string    `json:"name"`
+	BranchName          string    `json:"name"`
 	CountPeople         int       `json:"count_people"`
 	CountCounterService int       `json:"count_counter_service"`
 	MaxServingMinute    int32     `json:"max_serving_minute"`

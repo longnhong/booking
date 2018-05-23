@@ -23,6 +23,7 @@ type TicketBooking struct {
 	CheckInAt         int64        `json:"check_in_at"  bson:"check_in_at"`
 	AvatarTeller      string       `json:"avatar_teller"  bson:"avatar_teller"`
 	IdTicketCetm      string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
+	BranchName        string       `json:"branch_name"  bson:"branch_name"`
 	CnumCetm          string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	TellerID          string       `json:"teller_id"  bson:"teller_id"`
 	Teller            string       `json:"teller"  bson:"teller"`
@@ -61,6 +62,7 @@ type TicketUpdate struct {
 	TimeGoBank    int64      `bson:"time_go_bank" json:"time_go_bank"`
 	ServiceID     string     `json:"service_id" bson:"service_id"`
 	ServiceName   string     `json:"service_name" bson:"service_name"`
+	BranchName    string     `json:"branch_name"  bson:"branch_name"`
 	BranchID      string     `json:"branch_id"  bson:"branch_id"`
 	BranchAddress string     `json:"branch_address"  bson:"branch_address"`
 	TypeTicket    TypeTicket `json:"type_ticket" bson:"type_ticket"`
@@ -84,6 +86,7 @@ type TicketBookingCreate struct {
 	Customer      string     `bson:"customer" json:"customer"`
 	TimeGoBank    int64      `bson:"time_go_bank" json:"time_go_bank"`
 	BranchAddress string     `json:"branch_address"  bson:"branch_address"`
+	BranchName    string     `json:"branch_name"  bson:"branch_name"`
 	ServiceID     string     `json:"service_id" bson:"service_id"`
 	ServiceName   string     `json:"service_name" bson:"service_name"`
 	BranchID      string     `json:"branch_id"  bson:"branch_id"`

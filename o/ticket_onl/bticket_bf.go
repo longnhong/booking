@@ -27,6 +27,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 	var cusCode = NewParamDefault()
 	var ticket = TicketBooking{
 		BranchID:      btbk.BranchID,
+		BranchName:    btbk.BranchName,
 		BranchAddress: btbk.BranchAddress,
 		CustomerID:    btbk.CustomerID,
 		ServiceID:     btbk.ServiceID,
