@@ -55,7 +55,7 @@ func (tkWorker *TicketWorker) getTicketSenPush() {
 	for _, tk := range tkDays {
 		var timeRes = float64(tk.HourTimeGo - timeNow)
 		if !tk.IsUsedPush && common.ConfigSystemBooking.SendNotifyBfHour >= timeRes && timeRes >= 0 &&
-			tk.Status == ticket_onl.BOOKING_STATE_CREATED && float64(timeNow) >= common.ConfigSystemBooking.SendNotifyStartDay {
+			tk.Status == ticket_onl.BookingStateCreated && float64(timeNow) >= common.ConfigSystemBooking.SendNotifyStartDay {
 			var cus, _ = push_token.GetPushsUserId(tk.CustomerID)
 			if len(cus) > 0 {
 				err := sendPushTicketDay(cus, tk.TicketBooking)
@@ -74,7 +74,7 @@ func (tkWorker *TicketWorker) getTicketSenPushNear() {
 	for _, tk := range tkDays {
 		var timeRes = float64(tk.HourTimeGo - timeNow)
 		if !tk.IsUsedNear && common.ConfigSystemBooking.StartNear >= timeRes && timeRes >= common.ConfigSystemBooking.EndNear &&
-			tk.Status == ticket_onl.BOOKING_STATE_CREATED && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
+			tk.Status == ticket_onl.BookingStateCreated && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
 			var cus, _ = push_token.GetPushsUserId(tk.CustomerID)
 			fmt.Printf("Số push", cus)
 			if len(cus) > 0 {
@@ -95,7 +95,7 @@ func (tkWorker *TicketWorker) getTicketSenPushOut() (ticketDays []*ticket_onl.Ti
 	for _, tk := range tkDays {
 		var timeRes = float64(timeNow - tk.HourTimeGo)
 		if !tk.IsUsedNear && common.ConfigSystemBooking.StartOut > timeRes && timeRes >= common.ConfigSystemBooking.EndOut &&
-			tk.Status == ticket_onl.BOOKING_STATE_CREATED && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
+			tk.Status == ticket_onl.BookingStateCreated && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
 			ticketDays = append(ticketDays, tk)
 		}
 	}
@@ -115,10 +115,10 @@ func (tkWorker *TicketWorker) sendPushOut() {
 			}
 		}
 		ids = append(ids, tk.ID)
-		tk.Status = ticket_onl.BOOKING_STATE_NOT_ARRIVED
+		tk.Status = ticket_onl.BookingStateNotArrived
 	}
 	if len(ids) > 0 {
-		ticket_onl.UpdateStatusTickets(ids, ticket_onl.BOOKING_STATE_NOT_ARRIVED)
+		ticket_onl.UpdateStatusTickets(ids, ticket_onl.BookingStateNotArrived)
 	}
 }
 

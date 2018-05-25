@@ -18,7 +18,7 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 			"$gte": timeBeginDay,
 			"$lte": tiemEnOfday,
 		},
-		//"status": BOOKING_STATE_CREATED,
+		//"status": BookingStateCreated,
 	}
 	err = TicketBookingTable.FindOne(queryMatch, &tk)
 	if err != nil {
@@ -27,7 +27,7 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 		}
 		return
 	}
-	if tk.Status == BOOKING_STATE_CANCELLED || tk.Status == BOOKING_STATE_FINISHED {
+	if tk.Status == BookingStateSancelled || tk.Status == BookingStateFinished {
 		err = errors.New("Vé đã kết thúc!")
 	} else if tk.CheckInAt != 0 {
 		err = rest.BadRequestValid(errors.New("Code đã sử dụng!"))
@@ -36,7 +36,7 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 }
 
 func GetCustomerMySchedule(customerId string) (btks []*RateTicket, err error) {
-	var status = []string{string(BOOKING_STATE_CANCELLED), (string(BOOKING_STATE_FINISHED))}
+	var status = []string{string(BookingStateSancelled), (string(BookingStateFinished))}
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 		"updated_at":  bson.M{"$ne": 0},
@@ -90,7 +90,7 @@ func CheckTicketByDay(customerId string) (btks []*TicketBooking, err error) {
 			"$gte": timeBeginDay,
 			"$lte": tiemEnOfday,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	err = TicketBookingTable.FindWhere(queryMatch, &btks)
 	return btks, rest.IsErrorRecord(err)
@@ -99,7 +99,7 @@ func CheckTicketByDay(customerId string) (btks []*TicketBooking, err error) {
 func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 	var queryMatch = bson.M{
 		"customer_id": customerId,
-		"status":      BOOKING_STATE_FINISHED,
+		"status":      BookingStateFinished,
 	}
 	var query = []bson.M{}
 	var sort = bson.M{
@@ -130,17 +130,17 @@ func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 
 func (tk *TicketBooking) UpdateTimeCheckIn() error {
 	var timeNow = math.GetTimeNowVietNam().Unix()
-	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BOOKING_STATE_CONFIRMED, timeNow)
+	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BookingStateConfirmed, timeNow)
 	var up = bson.M{
 		"updated_at":  time.Now().Unix(),
 		"check_in_at": timeNow,
-		"status":      BOOKING_STATE_CONFIRMED,
+		"status":      BookingStateConfirmed,
 		"tracks":      tracks,
 	}
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CheckInAt = timeNow
-		tk.Status = BOOKING_STATE_CONFIRMED
+		tk.Status = BookingStateConfirmed
 		tk.Tracks = tracks
 	}
 	return err
@@ -150,13 +150,13 @@ func (tk *TicketBooking) UpdateByCnumCetm(cnum string, idCetm string) error {
 	var up = bson.M{
 		"cnum_cetm":      cnum,
 		"id_ticket_cetm": idCetm,
-		"status":         BOOKING_STATE_CONFIRMED,
+		"status":         BookingStateConfirmed,
 	}
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CnumCetm = cnum
 		tk.IdTicketCetm = idCetm
-		tk.Status = BOOKING_STATE_CONFIRMED
+		tk.Status = BookingStateConfirmed
 	}
 	return err
 }
@@ -168,7 +168,7 @@ func GetTicketDayInBranch(branchID string, timeStart int64, timeEnd int64) (btks
 			"$gte": timeStart,
 			"$lte": timeEnd,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	var query = []bson.M{}
 	var joinUser = bson.M{
@@ -194,7 +194,7 @@ func GetTicketTimeInBranch(branchID string, timeStart int64, timeEnd int64) (btk
 			"$gte": timeStart,
 			"$lte": timeEnd,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 
 	err = TicketBookingTable.FindWhere(queryMatch, &btks)
@@ -209,7 +209,7 @@ func GetAllTicketDay() (btks []*TicketBooking, err error) {
 			"$gte": timeBeginDay,
 			"$lte": tiemEnOfday,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
@@ -223,7 +223,7 @@ func GetTicketDayByUser(cusId string) (btks []*TicketBooking, err error) {
 			"$gte": timeBeginDay,
 			"$lte": tiemEnOfday,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
@@ -235,7 +235,7 @@ func GetAllTicketByTimeSearch(timeSearch int64, typeTicket TypeTicket) (btks []*
 			"$gte": start,
 			"$lte": end,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	if typeTicket == TYPE_SCHEDULE {
 		queryMatch["type_ticket"] = TYPE_SCHEDULE
@@ -251,7 +251,7 @@ func SearchTicket(idBranchs []string, timeStart int64, timeEnd int64) (btks []*T
 			"$gte": timeStart,
 			"$lte": timeEnd,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	var group = bson.M{"_id": "$branch_id", "count": bson.M{"$sum": 1}}
 	var query = []bson.M{
@@ -270,7 +270,7 @@ func GetByID(id string) (tk *TicketBooking, err error) {
 func GetTicketByUserNeedFeedback(userId string) (tks []*TicketBooking, err error) {
 	var queryMatch = bson.M{
 		"customer_id": userId,
-		"status":      BOOKING_STATE_FINISHED,
+		"status":      BookingStateFinished,
 	}
 	err = TicketBookingTable.FindWhere(queryMatch, &tks)
 	rest.IsErrorRecord(err)

@@ -36,7 +36,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 		TypeTicket:    btbk.TypeTicket,
 		CustomerCode:  cusCode,
 		Lang:          btbk.Lang,
-		Status:        BOOKING_STATE_CREATED,
+		Status:        BookingStateCreated,
 	}
 
 	if btbk.TypeTicket == TYPE_NOW {

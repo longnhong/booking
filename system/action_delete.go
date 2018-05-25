@@ -10,6 +10,6 @@ func (action *TicketAction) actionDelete(ticket *ticket_onl.TicketBooking) {
 		action.SetError(err)
 		return
 	}
-	ticket.Status = ticket_onl.BOOKING_STATE_DELETE
+	ticket.Status = ticket_onl.BookingStateDelete
 	action.Ticket = ticket
 }

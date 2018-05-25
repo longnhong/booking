@@ -19,9 +19,9 @@ func (c *TicketWorker) TicketWorking(action *TicketAction) error {
 	var ticket *ticket_onl.TicketBooking
 	var err error
 	var tkAction = action.Action
-	if tkAction != ticket_onl.BOOKING_STATE_CREATED &&
-		tkAction != ticket_onl.BOOKING_STATE_CHECK_CODE &&
-		tkAction != ticket_onl.BOOKING_STATE_CREATE_CETM {
+	if tkAction != ticket_onl.BookingStateCreated &&
+		tkAction != ticket_onl.BookingStateCheckCode &&
+		tkAction != ticket_onl.BookingStateCreateCetm {
 		ticket, err = c.GetTicketByID(action.TicketID)
 		if err != nil {
 			action.SetError(err)
@@ -32,7 +32,7 @@ func (c *TicketWorker) TicketWorking(action *TicketAction) error {
 	err = action.GetError()
 	if err == nil {
 		var timegoBank = action.Ticket.TimeGoBank
-		if action.Action == ticket_onl.BOOKING_STATE_CREATED && math.CompareDayTime(math.GetTimeNowVietNam(), timegoBank) == 0 {
+		if action.Action == ticket_onl.BookingStateCreated && math.CompareDayTime(math.GetTimeNowVietNam(), timegoBank) == 0 {
 			var hourDay = math.HourMinuteEpoch(timegoBank)
 			fmt.Printf("\nTẠO VÉ TRONG NGÀY", hourDay)
 			var tkDay = ticket_onl.TicketDay{
@@ -40,7 +40,7 @@ func (c *TicketWorker) TicketWorking(action *TicketAction) error {
 				HourTimeGo:    hourDay,
 			}
 			c.TicketCaches[action.Ticket.ID] = &tkDay
-		} else if tkAction == ticket_onl.BOOKING_STATE_CHECK_CODE {
+		} else if tkAction == ticket_onl.BookingStateCheckCode {
 			if val, ok := c.TicketCaches[action.Ticket.ID]; ok {
 				val.TicketBooking = action.Ticket
 			}
@@ -53,7 +53,7 @@ func sendFeedback(pDevices []string, tk *ticket_onl.TicketBooking, status ticket
 	var title = "Feedback cho dịch vụ!"
 	var des string
 	var stateNotify notify.StateNotify
-	if status == ticket_onl.BOOKING_STATE_FINISHED {
+	if status == ticket_onl.BookingStateFinished {
 		des = "Teller " + tk.Teller + " đã phục vụ bạn. Hãy phản hồi về chất lượng dịch vụ!"
 		stateNotify = notify.CETM_FINISHED
 	} else {

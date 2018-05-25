@@ -56,9 +56,9 @@ func (tk *TicketBooking) UpdateTicketBookingByCetm(upC *UpdateCetm) error {
 
 func (tk *TicketBooking) MarkDeleteTicket() error {
 	var timeNow = math.GetTimeNowVietNam().Unix()
-	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BOOKING_STATE_DELETE, timeNow)
+	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BookingStateDelete, timeNow)
 	var updateCancel = bson.M{
-		"status":     BOOKING_STATE_DELETE,
+		"status":     BookingStateDelete,
 		"updated_at": 0,
 		"tracks":     tracks,
 	}
@@ -83,10 +83,10 @@ func UpdateMissedTickets() (error, int) {
 		"time_go_bank": bson.M{
 			"$lte": timeNow,
 		},
-		"status": BOOKING_STATE_CREATED,
+		"status": BookingStateCreated,
 	}
 	var newUp = map[string]interface{}{
-		"status":     BOOKING_STATE_NOT_ARRIVED,
+		"status":     BookingStateNotArrived,
 		"updated_at": timeNow,
 	}
 	var rest, err = TicketBookingTable.UpdateAll(queryMatch, bson.M{"$set": newUp})

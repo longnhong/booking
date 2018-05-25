@@ -124,15 +124,15 @@ const (
 )
 
 const (
-	BOOKING_STATE_CREATED     = BookingState("created")
-	BOOKING_STATE_CONFIRMED   = BookingState("confirmed")
-	BOOKING_STATE_CANCELLED   = BookingState("cancelled")
-	BOOKING_STATE_DELETE      = BookingState("deleted")
-	BOOKING_STATE_FINISHED    = BookingState("finished")
-	BOOKING_STATE_NOT_ARRIVED = BookingState("not_arrived")
-	BOOKING_STATE_CHECK_CODE  = BookingState("check_code")  // CheckCode
-	BOOKING_STATE_CREATE_CETM = BookingState("create_cetm") // CheckCode
-	BOOKING_CUSTOMER_UPDATE   = BookingState("cus_update")  //customer update
+	BookingStateCreated    = BookingState("created")
+	BookingStateConfirmed  = BookingState("confirmed")
+	BookingStateSancelled  = BookingState("cancelled")
+	BookingStateDelete     = BookingState("deleted")
+	BookingStateFinished   = BookingState("finished")
+	BookingStateNotArrived = BookingState("not_arrived")
+	BookingStateCheckCode  = BookingState("check_code")  // CheckCode
+	BookingStateCreateCetm = BookingState("create_cetm") // CheckCode
+	BookingCustomerUpdate  = BookingState("cus_update")  //customer update
 )
 
 type TicketBranches struct {

@@ -17,7 +17,7 @@ func (s *ticketServer) handlerDeleteTicket(ctx *gin.Context) {
 		BTicketID string `json:"bticket_id"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
-	var tk = s.actionChange(body.BTicketID, "", ticket_onl.BOOKING_STATE_DELETE, nil)
+	var tk = s.actionChange(body.BTicketID, "", ticket_onl.BookingStateDelete, nil)
 	if tk.TypeTicket == ticket_onl.TYPE_NOW {
 		var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/cancel_bticket"
 		var data = struct {

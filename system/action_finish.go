@@ -14,7 +14,7 @@ func (action *TicketAction) actionFinish(ticket *ticket_onl.TicketBooking) {
 		action.SetError(err)
 		return
 	}
-	if ticket.Status == ticket_onl.BOOKING_STATE_CANCELLED || ticket_onl.BOOKING_STATE_FINISHED == ticket.Status {
+	if ticket.Status == ticket_onl.BookingStateSancelled || ticket_onl.BookingStateFinished == ticket.Status {
 		action.SetError(errors.New("Vé đã được phản hồi"))
 		return
 	}

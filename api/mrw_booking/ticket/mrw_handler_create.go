@@ -40,7 +40,7 @@ func (s *ticketServer) handlerCreateTicket(ctx *gin.Context) {
 		"ticket":     body,
 		"push_token": push.PushToken})
 
-	var ticket = s.actionChange("", userTK.ID, ticket_onl.BOOKING_STATE_CREATED, extra)
+	var ticket = s.actionChange("", userTK.ID, ticket_onl.BookingStateCreated, extra)
 	var countPP int
 	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
 		countPP, _ = ctrl.CreateNumCetm(userTK, ticket)
