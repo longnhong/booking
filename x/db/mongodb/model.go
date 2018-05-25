@@ -1,7 +1,7 @@
 package mongodb
 
 import (
-	"cetm_booking/x/rest/math"
+	"cetm_booking/x/math"
 	"time"
 )
 

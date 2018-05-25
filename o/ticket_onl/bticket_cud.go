@@ -15,10 +15,11 @@ func (tkbkCreate *TicketBookingCreate) CrateTicketBooking() (*TicketBooking, err
 }
 
 func (tkit *TicketBooking) UpdateTicketBookingByCustomer(tkbk *TicketUpdate) (*TicketBooking, error) {
-	err := tkbk.updateBf()
+	err := tkit.updateBf(tkbk)
 	if err != nil {
 		return nil, err
 	}
+
 	err = TicketBookingTable.UnsafeUpdateByID(tkbk.BTicketID, tkbk)
 	if err != nil {
 		return nil, err
@@ -31,19 +32,40 @@ func (tkit *TicketBooking) UpdateTicketBookingByCustomer(tkbk *TicketUpdate) (*T
 	tkit.TypeTicket = tkbk.TypeTicket
 	tkit.UpdatedAt = tkbk.UpdatedAt
 	tkit.BranchName = tkbk.BranchName
+	tkit.Tracks = tkbk.Tracks
 	return tkit, nil
 }
 
-func (upC *UpdateCetm) UpdateTicketBookingByCetm() error {
-	return TicketBookingTable.UnsafeUpdateByID(upC.BTicketID, upC)
+func (tk *TicketBooking) UpdateTicketBookingByCetm(upC *UpdateCetm) error {
+	var timeNow = math.GetTimeNowVietNam().Unix()
+	upC.Tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, upC.Status, timeNow)
+	err := TicketBookingTable.UnsafeUpdateByID(upC.BTicketID, upC)
+	if err == nil {
+		tk.Tracks = upC.Tracks
+		tk.Status = upC.Status
+		tk.AvatarTeller = upC.AvatarTeller
+		tk.TellerID = upC.TellerID
+		tk.IdTicketCetm = upC.IdTicketCetm
+		tk.CnumCetm = upC.CnumCetm
+		tk.ServingTime = upC.ServingTime
+		tk.WaitingTime = upC.WaitingTime
+		tk.Teller = upC.Teller
+	}
+	return err
 }
 
 func (tk *TicketBooking) MarkDeleteTicket() error {
+	var timeNow = math.GetTimeNowVietNam().Unix()
+	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BOOKING_STATE_DELETE, timeNow)
 	var updateCancel = bson.M{
 		"status":     BOOKING_STATE_DELETE,
 		"updated_at": 0,
+		"tracks":     tracks,
 	}
 	err := TicketBookingTable.UnsafeUpdateByID(tk.ID, updateCancel)
+	if err == nil {
+		tk.Tracks = tracks
+	}
 	return err
 }
 

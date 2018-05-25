@@ -1,10 +1,9 @@
 package ticket_onl
 
 import (
+	"cetm_booking/x/math"
 	"cetm_booking/x/rest"
-	"cetm_booking/x/rest/math"
 	"errors"
-	"time"
 )
 
 var errBranchID = rest.BadRequestValid(errors.New("Không tồn tại chi nhánh"))
@@ -24,6 +23,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 	if err != nil {
 		return err, nil
 	}
+
 	var cusCode = NewParamDefault()
 	var ticket = TicketBooking{
 		BranchID:      btbk.BranchID,
@@ -38,6 +38,7 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 		Lang:          btbk.Lang,
 		Status:        BOOKING_STATE_CREATED,
 	}
+
 	if btbk.TypeTicket == TYPE_NOW {
 		ticket.CheckInAt = btbk.TimeGoBank
 	}
@@ -51,13 +52,28 @@ func CheckType(typeTK TypeTicket) error {
 	return nil
 }
 
-func (btbk *TicketUpdate) updateBf() error {
+func (tk *TicketBooking) updateBf(btbk *TicketUpdate) error {
+	var timeNow = math.GetTimeNowVietNam().Unix()
+	btbk.Tracks = tk.Tracks
+	btbk.Tracks = tk.updateTrack(btbk.ServiceID, btbk.BranchID, btbk.Status, timeNow)
 	var err = btbk.CheckTicketBookingUp()
 	if err != nil {
 		return err
 	}
-	btbk.UpdatedAt = time.Now().Unix()
+	btbk.UpdatedAt = timeNow
 	return nil
+}
+
+func (tk *TicketBooking) updateTrack(serviceID string, branchID string, status BookingState, timeNow int64) []TicketHst {
+	var tracks = tk.Tracks
+	var hst = TicketHst{
+		BranchID:  branchID,
+		ServiceID: serviceID,
+		Status:    status,
+		MTime:     timeNow,
+	}
+	tracks = append(tracks, hst)
+	return tracks
 }
 
 func (tc *TicketUpdate) CheckTicketBookingUp() error {

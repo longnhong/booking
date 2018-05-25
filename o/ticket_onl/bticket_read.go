@@ -129,16 +129,19 @@ func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 }
 
 func (tk *TicketBooking) UpdateTimeCheckIn() error {
-	var timeNow = time.Now().Unix()
+	var timeNow = math.GetTimeNowVietNam().Unix()
+	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BOOKING_STATE_CONFIRMED, timeNow)
 	var up = bson.M{
 		"updated_at":  time.Now().Unix(),
 		"check_in_at": timeNow,
 		"status":      BOOKING_STATE_CONFIRMED,
+		"tracks":      tracks,
 	}
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CheckInAt = timeNow
 		tk.Status = BOOKING_STATE_CONFIRMED
+		tk.Tracks = tracks
 	}
 	return err
 }
@@ -298,7 +301,7 @@ func GetTicketReport(branchIds []string, timeStart int64, timeEnd int64) (btks [
 		"foreignField": "_id",
 		"as":           "customer",
 	}
-	var unWindCus = "$customer"
+	var unWindCus = bson.M{"path": "$customer", "preserveNullAndEmptyArrays": true}
 	query = []bson.M{
 		{"$match": queryMatch},
 		{"$lookup": joinUser},

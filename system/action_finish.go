@@ -18,19 +18,11 @@ func (action *TicketAction) actionFinish(ticket *ticket_onl.TicketBooking) {
 		action.SetError(errors.New("Vé đã được phản hồi"))
 		return
 	}
-	err = data.UpdateTicketBookingByCetm()
+	err = ticket.UpdateTicketBookingByCetm(data)
 	if err != nil {
 		action.SetError(err)
 		return
 	}
-	ticket.Status = data.Status
-	ticket.AvatarTeller = data.AvatarTeller
-	ticket.TellerID = data.TellerID
-	ticket.IdTicketCetm = data.IdTicketCetm
-	ticket.CnumCetm = data.CnumCetm
-	ticket.ServingTime = data.ServingTime
-	ticket.WaitingTime = data.WaitingTime
-	ticket.Teller = data.Teller
 	action.Ticket = ticket
 
 	pDevices, err := push_token.GetPushsUserId(ticket.CustomerID)

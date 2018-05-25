@@ -12,6 +12,7 @@ func (action *TicketAction) cusUpdate(ticket *ticket_onl.TicketBooking) {
 		action.SetError(err)
 		return
 	}
+	data.Status = action.Action
 	tkUp, err := ticket.UpdateTicketBookingByCustomer(data)
 	if err != nil {
 		action.SetError(err)

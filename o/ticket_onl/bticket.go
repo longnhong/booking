@@ -24,6 +24,7 @@ type TicketBooking struct {
 	AvatarTeller      string       `json:"avatar_teller"  bson:"avatar_teller"`
 	IdTicketCetm      string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
 	BranchName        string       `json:"branch_name"  bson:"branch_name"`
+	Tracks            []TicketHst  `json:"tracks"  bson:"tracks"`
 	CnumCetm          string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	TellerID          string       `json:"teller_id"  bson:"teller_id"`
 	Teller            string       `json:"teller"  bson:"teller"`
@@ -31,6 +32,13 @@ type TicketBooking struct {
 	WaitingTime       int64        `json:"waiting_time"  bson:"waiting_time"`
 	IsRate            TypeRate     `json:"is_rate"  bson:"is_rate"` //0: chưa rate, 1:rate, 2: khong rate
 	Status            BookingState `json:"status"  bson:"status"`
+}
+
+type TicketHst struct {
+	ServiceID string       `json:"service_id" bson:"service_id"`
+	BranchID  string       `json:"branch_id"  bson:"branch_id"`
+	MTime     int64        `json:"ctime"  bson:"ctime"`
+	Status    BookingState `json:"status"  bson:"status"`
 }
 
 type RateTicket struct {
@@ -44,6 +52,7 @@ type UpdateCetm struct {
 	AvatarTeller string       `json:"avatar_teller"  bson:"avatar_teller"`
 	TellerID     string       `json:"teller_id"  bson:"teller_id"`
 	IdTicketCetm string       `json:"id_ticket_cetm"  bson:"id_ticket_cetm"`
+	Tracks       []TicketHst  `json:"tracks"  bson:"tracks"`
 	CnumCetm     string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	Status       BookingState `json:"status"  bson:"status"`
 	ServingTime  int64        `json:"serving_time"  bson:"serving_time"`
@@ -57,15 +66,17 @@ type WhenCreateTicketInCetm struct {
 }
 
 type TicketUpdate struct {
-	UpdatedAt     int64      `json:"updated_at" bson:"updated_at"`
-	BTicketID     string     `bson:"bticket_id" json:"bticket_id"`
-	TimeGoBank    int64      `bson:"time_go_bank" json:"time_go_bank"`
-	ServiceID     string     `json:"service_id" bson:"service_id"`
-	ServiceName   string     `json:"service_name" bson:"service_name"`
-	BranchName    string     `json:"branch_name"  bson:"branch_name"`
-	BranchID      string     `json:"branch_id"  bson:"branch_id"`
-	BranchAddress string     `json:"branch_address"  bson:"branch_address"`
-	TypeTicket    TypeTicket `json:"type_ticket" bson:"type_ticket"`
+	UpdatedAt     int64        `json:"updated_at" bson:"updated_at"`
+	BTicketID     string       `bson:"bticket_id" json:"bticket_id"`
+	TimeGoBank    int64        `bson:"time_go_bank" json:"time_go_bank"`
+	ServiceID     string       `json:"service_id" bson:"service_id"`
+	ServiceName   string       `json:"service_name" bson:"service_name"`
+	BranchName    string       `json:"branch_name"  bson:"branch_name"`
+	BranchID      string       `json:"branch_id"  bson:"branch_id"`
+	BranchAddress string       `json:"branch_address"  bson:"branch_address"`
+	TypeTicket    TypeTicket   `json:"type_ticket" bson:"type_ticket"`
+	Tracks        []TicketHst  `json:"tracks"  bson:"tracks"`
+	Status        BookingState `json:"status"  bson:"status"`
 }
 
 type TicketDay struct {
