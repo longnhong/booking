@@ -15,13 +15,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type BookingServer struct {
+type bookingServer struct {
 	*gin.RouterGroup
 	rest.JsonRender
 }
 
 func NewBookingServer(parent *gin.RouterGroup, name string, tkWorker *system.TicketWorker) {
-	var s = BookingServer{
+	var s = bookingServer{
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("/search_branchs", s.handlerSearchs)
@@ -30,7 +30,7 @@ func NewBookingServer(parent *gin.RouterGroup, name string, tkWorker *system.Tic
 	notify.NewNotifyServer(s.RouterGroup, "notify")
 }
 
-func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
+func (s *bookingServer) handlerSearchs(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	var body = struct {
 		KmScan       float64               `json:"km_scan"`
@@ -51,7 +51,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 		rest.AssertNil(errors.New("Có lỗi xảy ra!"))
 	}
 	var result = res.Data
-	if body.TypeSearch == ticket_onl.TYPE_SCHEDULE {
+	if body.TypeSearch == ticket_onl.TypeSchedule {
 		branchIds := make([]string, len(result))
 		for i, item := range result {
 			branchIds[i] = item.BranchID
@@ -74,7 +74,7 @@ func (s *BookingServer) handlerSearchs(ctx *gin.Context) {
 	s.SendData(ctx, result)
 }
 
-func (s *BookingServer) handleService(ctx *gin.Context) {
+func (s *bookingServer) handleService(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	fmt.Println("CETM: " + common.ConfigSystemBooking.LinkCetm)
 	var url = common.ConfigSystemBooking.LinkCetm + "/room/booking/search_services"

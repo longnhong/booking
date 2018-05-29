@@ -74,7 +74,7 @@ func (tkWorker *TicketWorker) getTicketSenPushNear() {
 	for _, tk := range tkDays {
 		var timeRes = float64(tk.HourTimeGo - timeNow)
 		if !tk.IsUsedNear && common.ConfigSystemBooking.StartNear >= timeRes && timeRes >= common.ConfigSystemBooking.EndNear &&
-			tk.Status == ticket_onl.BookingStateCreated && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
+			tk.Status == ticket_onl.BookingStateCreated && tk.TypeTicket == ticket_onl.TypeSchedule {
 			var cus, _ = push_token.GetPushsUserId(tk.CustomerID)
 			fmt.Printf("Số push", cus)
 			if len(cus) > 0 {
@@ -95,7 +95,7 @@ func (tkWorker *TicketWorker) getTicketSenPushOut() (ticketDays []*ticket_onl.Ti
 	for _, tk := range tkDays {
 		var timeRes = float64(timeNow - tk.HourTimeGo)
 		if !tk.IsUsedNear && common.ConfigSystemBooking.StartOut > timeRes && timeRes >= common.ConfigSystemBooking.EndOut &&
-			tk.Status == ticket_onl.BookingStateCreated && tk.TypeTicket == ticket_onl.TYPE_SCHEDULE {
+			tk.Status == ticket_onl.BookingStateCreated && tk.TypeTicket == ticket_onl.TypeSchedule {
 			ticketDays = append(ticketDays, tk)
 		}
 	}

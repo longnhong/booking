@@ -111,7 +111,7 @@ func (s *ticketServer) handlerRate(ctx *gin.Context) {
 	var usrTk, _ = user.GetUserFromToken(ctx.Request)
 	var body *rate.Rate
 	rest.AssertNil(ctx.BindJSON(&body))
-	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TYPE_RATED)
+	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TypeRated)
 	rest.AssertNil(err)
 	body.CustomerId = usrTk.ID
 	body.CrateRate()
@@ -121,7 +121,7 @@ func (s *ticketServer) handlerRate(ctx *gin.Context) {
 func (s *ticketServer) handlerNoRate(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
 	var body *rate.Rate
-	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TYPE_NO_RATE)
+	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TypeNoRate)
 	rest.AssertNil(err)
 	s.SendData(ctx, nil)
 }

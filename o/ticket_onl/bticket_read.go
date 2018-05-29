@@ -237,8 +237,8 @@ func GetAllTicketByTimeSearch(timeSearch int64, typeTicket TypeTicket) (btks []*
 		},
 		"status": BookingStateCreated,
 	}
-	if typeTicket == TYPE_SCHEDULE {
-		queryMatch["type_ticket"] = TYPE_SCHEDULE
+	if typeTicket == TypeSchedule {
+		queryMatch["type_ticket"] = TypeSchedule
 	}
 	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
@@ -286,7 +286,8 @@ func UpdateRate(id string, numRate TypeRate) (err error) {
 	return
 }
 
-func GetTicketReport(branchIds []string, timeStart int64, timeEnd int64) (btks []*TicketUser, err error) {
+func GetTicketReport(branchIds []string, timeStart int64, timeEnd int64, skip int64, limit int64) (btks []*TicketUser, err error) {
+	btks = make([]*TicketUser, 0)
 	var queryMatch = bson.M{
 		"branch_id": bson.M{"$in": branchIds},
 		"created_at": bson.M{
@@ -306,7 +307,72 @@ func GetTicketReport(branchIds []string, timeStart int64, timeEnd int64) (btks [
 		{"$match": queryMatch},
 		{"$lookup": joinUser},
 		{"$unwind": unWindCus},
+		{"$skip": skip},
+		{"$limit": limit},
 	}
 	err = TicketBookingTable.Pipe(query).All(&btks)
+	rest.IsErrorRecord(err)
 	return btks, err
+}
+
+type TicketDetailReport struct {
+	ID      int           `json:"id" bson:"_id"`
+	Tickets []*TicketUser `json:"tickets" bson:"tickets"`
+}
+
+func GetDetailReport(branchIds []string, timeStart int64, timeEnd int64) (btks []*TicketDetailReport, err error) {
+	btks = make([]*TicketDetailReport, 0)
+	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
+	var timeNew = math.BeginningOfDay().In(loc)
+	var queryMatch = bson.M{
+		"branch_id": bson.M{"$in": branchIds},
+		"created_at": bson.M{
+			"$gte": timeStart,
+			"$lte": timeEnd,
+		},
+	}
+	var query = []bson.M{}
+	var joinUser = bson.M{
+		"from":         "user",
+		"localField":   "customer_id",
+		"foreignField": "_id",
+		"as":           "customer",
+	}
+	var unWindCus = bson.M{"path": "$customer", "preserveNullAndEmptyArrays": true}
+	var project1 = bson.M{
+		"date":        bson.M{"$add": []interface{}{timeNew, bson.M{"$multiply": []interface{}{"$time_go_bank", 1000}}}},
+		"customer_id": 1, "service_id": 1, "service_name": 1, "branch_id": 1, "branch_address": 1,
+		"type_ticket": 1, "lang": 1, "customer_code": 1, "check_in_at": 1, "avatar_teller": 1, "id_ticket_cetm": 1,
+		"branch_name": 1, "tracks": 1, "cnum_cetm": 1, "teller_id": 1, "teller": 1,
+		"serving_time": 1, "waiting_time": 1, "is_rate": 1, "status": 1, "customer": 1,
+	}
+	var group = bson.M{
+		"_id": bson.M{
+			"$hour": "$date",
+		},
+		"tickets": bson.M{"$push": "$$ROOT"},
+	}
+	query = []bson.M{
+		{"$match": queryMatch},
+		{"$lookup": joinUser},
+		{"$unwind": unWindCus},
+		{"$project": project1},
+		{"$group": group},
+	}
+	err = TicketBookingTable.Pipe(query).All(&btks)
+	rest.IsErrorRecord(err)
+	return btks, err
+}
+
+func GetTicketReportByTime(branchIds []string, timeStart int64, timeEnd int64) (int, error) {
+	var queryMatch = bson.M{
+		"branch_id": bson.M{"$in": branchIds},
+		"created_at": bson.M{
+			"$gte": timeStart,
+			"$lte": timeEnd,
+		},
+	}
+	var count, err = TicketBookingTable.CountWhere(queryMatch)
+	rest.IsErrorRecord(err)
+	return count, err
 }

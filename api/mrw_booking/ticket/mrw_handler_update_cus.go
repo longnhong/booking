@@ -17,7 +17,7 @@ func (s *ticketServer) handlerUpdateTicketCus(ctx *gin.Context) {
 	var extra, _ = json.Marshal(body)
 	var ticket = s.actionChange(body.BTicketID, "", ticket_onl.BookingCustomerUpdate, extra)
 	var usr *user.User
-	if body.TypeTicket == ticket_onl.TYPE_NOW && ticket.TypeTicket == ticket_onl.TYPE_SCHEDULE {
+	if body.TypeTicket == ticket_onl.TypeNow && ticket.TypeTicket == ticket_onl.TypeSchedule {
 		usr, _ = auth.GetUserFromToken(ctx.Request)
 		var timeNow = math.GetTimeNowVietNam()
 		if math.CompareDayTime(timeNow, body.TimeGoBank) == 0 {

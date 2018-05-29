@@ -39,14 +39,14 @@ func (btbk *TicketBookingCreate) createBf() (error, *TicketBooking) {
 		Status:        BookingStateCreated,
 	}
 
-	if btbk.TypeTicket == TYPE_NOW {
+	if btbk.TypeTicket == TypeNow {
 		ticket.CheckInAt = btbk.TimeGoBank
 	}
 	return nil, &ticket
 }
 
 func CheckType(typeTK TypeTicket) error {
-	if typeTK != TYPE_NOW && typeTK != TYPE_SCHEDULE {
+	if typeTK != TypeNow && typeTK != TypeSchedule {
 		return errTypeTicket
 	}
 	return nil

@@ -9,10 +9,10 @@ import (
 	"time"
 )
 
-var FirstDayMonday bool
-var TimeFormats = []string{"1/2/2006", "1/2/2006 15:4:5", "2006-1-2 15:4:5", "2006-1-2 15:4", "2006-1-2", "1-2", "15:4:5", "15:4", "15", "15:4:5 Jan 2, 2006 MST", "2006-01-02 15:04:05.999999999 -0700 MST"}
+var firstDayMonday bool
+var timeFormats = []string{"1/2/2006", "1/2/2006 15:4:5", "2006-1-2 15:4:5", "2006-1-2 15:4", "2006-1-2", "1-2", "15:4:5", "15:4", "15", "15:4:5 Jan 2, 2006 MST", "2006-01-02 15:04:05.999999999 -0700 MST"}
 
-/* lay gio hien tai he thong */
+// lay gio hien tai he thong
 func GetTimeNowVietNam() time.Time {
 	var LocNowVietNam, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	return time.Now().In(LocNowVietNam)
@@ -127,7 +127,7 @@ func BeginningOfDayInt64(date int64) time.Time {
 func (now *Now) BeginningOfWeek() time.Time {
 	t := now.BeginningOfDay()
 	weekday := int(t.Weekday())
-	if FirstDayMonday {
+	if firstDayMonday {
 		if weekday == 0 {
 			weekday = 7
 		}
@@ -184,41 +184,6 @@ func (now *Now) EndOfYear() time.Time {
 	return now.BeginningOfYear().AddDate(1, 0, 0).Add(-time.Nanosecond)
 }
 
-func CountAllDate(dateNoWork []int, date1 time.Time, date2 time.Time) (allDateNoWork int) {
-	var dateCheck = date2.AddDate(0, 0, 1)
-	for {
-		if date1 == dateCheck {
-			return
-		}
-
-		for _, item := range dateNoWork {
-			var dayWeek = time.Monday
-			switch item {
-			case 2:
-				dayWeek = time.Monday
-			case 3:
-				dayWeek = time.Tuesday
-			case 4:
-				dayWeek = time.Wednesday
-			case 5:
-				dayWeek = time.Thursday
-			case 6:
-				dayWeek = time.Friday
-			case 7:
-				dayWeek = time.Saturday
-			case 8:
-				dayWeek = time.Sunday
-			}
-			if date1.Weekday() == dayWeek {
-				allDateNoWork++
-				fmt.Println(dayWeek)
-				break
-			}
-		}
-		date1 = date1.AddDate(0, 0, 1)
-	}
-}
-
 func CompareDayWeek(dateTime1 time.Time, date2 int64) int {
 	var dateTime2 = time.Unix(date2, 0)
 	if dateTime1.Weekday() == dateTime2.Weekday() {
@@ -261,10 +226,10 @@ func (now *Now) Sunday() time.Time {
 	weekday := int(t.Weekday())
 	if weekday == 0 {
 		return t
-	} else {
-		d := time.Duration(7-weekday) * 24 * time.Hour
-		return t.Truncate(time.Hour).Add(d)
 	}
+	d := time.Duration(7-weekday) * 24 * time.Hour
+	return t.Truncate(time.Hour).Add(d)
+
 }
 
 func (now *Now) EndOfSunday() time.Time {
@@ -272,7 +237,7 @@ func (now *Now) EndOfSunday() time.Time {
 }
 
 func parseWithFormat(str string) (t time.Time, err error) {
-	for _, format := range TimeFormats {
+	for _, format := range timeFormats {
 		t, err = time.Parse(format, str)
 		if err == nil {
 			return
@@ -413,5 +378,12 @@ func BeginAndEndDayNow() (start int64, end int64) {
 func TimeToString(val int64) string {
 	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	var timeNow = time.Unix(val, 0).In(loc)
-	return strconv.Itoa(timeNow.Hour()) + ":" + strconv.Itoa(timeNow.Minute())
+	var minute = timeNow.Minute()
+	var minuteStr string
+	if minute == 0 {
+		minuteStr = "00"
+	} else {
+		minuteStr = strconv.Itoa(minute)
+	}
+	return strconv.Itoa(timeNow.Hour()) + ":" + minuteStr
 }

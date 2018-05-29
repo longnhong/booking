@@ -113,14 +113,14 @@ type TypeTicket string
 type TypeRate int
 
 const (
-	TYPE_DEFAULT_RATE = TypeRate(0)
-	TYPE_RATED        = TypeRate(1)
-	TYPE_NO_RATE      = TypeRate(2)
+	TypeDefaultRate = TypeRate(0)
+	TypeRated       = TypeRate(1)
+	TypeNoRate      = TypeRate(2)
 )
 
 const (
-	TYPE_NOW      = TypeTicket("book_now")
-	TYPE_SCHEDULE = TypeTicket("book_schedule")
+	TypeNow      = TypeTicket("book_now")
+	TypeSchedule = TypeTicket("book_schedule")
 )
 
 const (

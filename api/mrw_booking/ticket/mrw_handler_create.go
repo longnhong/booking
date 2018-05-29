@@ -42,7 +42,7 @@ func (s *ticketServer) handlerCreateTicket(ctx *gin.Context) {
 
 	var ticket = s.actionChange("", userTK.ID, ticket_onl.BookingStateCreated, extra)
 	var countPP int
-	if ticket.TypeTicket == ticket_onl.TYPE_NOW {
+	if ticket.TypeTicket == ticket_onl.TypeNow {
 		countPP, _ = ctrl.CreateNumCetm(userTK, ticket)
 	} else {
 		var tks, err = ticket_onl.GetAllTicketByTimeSearch(body.TimeGoBank, body.TypeTicket)
