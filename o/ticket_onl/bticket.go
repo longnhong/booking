@@ -124,15 +124,15 @@ const (
 )
 
 const (
-	BookingStateCreated    = BookingState("created")
-	BookingStateConfirmed  = BookingState("confirmed")
-	BookingStateSancelled  = BookingState("cancelled")
-	BookingStateDelete     = BookingState("deleted")
-	BookingStateFinished   = BookingState("finished")
-	BookingStateNotArrived = BookingState("not_arrived")
+	BookingStateCreated    = BookingState("created")     // vừa tạo
+	BookingStateConfirmed  = BookingState("confirmed")   // đã xác nhận đến ngân hàng
+	BookingStateSancelled  = BookingState("cancelled")   // cetm gọi ko có mặt
+	BookingStateDelete     = BookingState("deleted")     // kh xóa vé
+	BookingStateFinished   = BookingState("finished")    // đã giao dịch xong
+	BookingStateNotArrived = BookingState("not_arrived") // không đến
 	BookingStateCheckCode  = BookingState("check_code")  // CheckCode
 	BookingStateCreateCetm = BookingState("create_cetm") // CheckCode
-	BookingCustomerUpdate  = BookingState("cus_update")  //customer update
+	BookingCustomerUpdate  = BookingState("cus_update")  //kh update
 )
 
 type TicketBranches struct {

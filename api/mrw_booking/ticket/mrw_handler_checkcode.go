@@ -12,7 +12,6 @@ import (
 )
 
 func (s *ticketServer) handlerCheckCode(ctx *gin.Context) {
-	//var usrTk = user.GetUserFromToken(ctx.Request)
 	fmt.Println("CHECK CODE")
 	var body = struct {
 		CustomerCode string `json:"customer_code"`
@@ -25,6 +24,7 @@ func (s *ticketServer) handlerCheckCode(ctx *gin.Context) {
 		rest.AssertNil(errors.New("Code sai"))
 	}
 	var userTK = auth.GetUserByID(ticket.CustomerID)
+	ctrl.CreateNumCetm(userTK, ticket, false)
 	var data = ctrl.DataTicketSendCetm{
 		TicketBooking: ticket,
 		Customer:      userTK,

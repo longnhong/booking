@@ -41,14 +41,16 @@ func (b *Box) Accept(id string, conn *websocket.Conn) {
 		}
 	}()
 	//recive data
-	for {
-		if _, msg, err := conn.ReadMessage(); err != nil {
-			glog.Error(err)
-			panic(err)
-		} else {
-			b.serve(NewRequest(msg))
+	go func() {
+		for {
+			if _, msg, err := conn.ReadMessage(); err != nil {
+				glog.Error(err)
+				panic(err)
+			} else {
+				b.serve(NewRequest(msg))
+			}
 		}
-	}
+	}()
 
 }
 

@@ -128,20 +128,24 @@ func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 	return btk, err
 }
 
-func (tk *TicketBooking) UpdateTimeCheckIn() error {
+func (tk *TicketBooking) UpdateTimeCheckIn(cnum string, idCetm string) error {
 	var timeNow = math.GetTimeNowVietNam().Unix()
 	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BookingStateConfirmed, timeNow)
 	var up = bson.M{
-		"updated_at":  time.Now().Unix(),
-		"check_in_at": timeNow,
-		"status":      BookingStateConfirmed,
-		"tracks":      tracks,
+		"updated_at":     time.Now().Unix(),
+		"check_in_at":    timeNow,
+		"status":         BookingStateConfirmed,
+		"tracks":         tracks,
+		"cnum_cetm":      cnum,
+		"id_ticket_cetm": idCetm,
 	}
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CheckInAt = timeNow
 		tk.Status = BookingStateConfirmed
 		tk.Tracks = tracks
+		tk.CnumCetm = cnum
+		tk.IdTicketCetm = idCetm
 	}
 	return err
 }
