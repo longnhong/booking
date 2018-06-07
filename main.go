@@ -10,15 +10,15 @@ import (
 	"cetm_booking/room"
 	"cetm_booking/system"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	//"net/http"
 )
 
 func main() {
 	router := gin.New()
-	router.StaticFS("/admin", http.Dir("./admin")).Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Content-Type", "text/html")
-		c.Next()
-	})
+	// router.StaticFS("/admin", http.Dir("./admin")).Use(func(c *gin.Context) {
+	// 	c.Writer.Header().Set("Content-Type", "text/html")
+	// 	c.Next()
+	// })
 	router.Use(middleware.AddHeader(), gin.Logger(), middleware.Recovery())
 	//static
 	// router.StaticFS("/static", http.Dir("./upload"))

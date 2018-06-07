@@ -27,7 +27,7 @@ func (s *ticketServer) handlerUpdateTicketCus(ctx *gin.Context) {
 		auth.GetFromToken(ctx.Request)
 	}
 	if usr != nil {
-		ctrl.CreateNumCetm(usr, ticket, true)
+		ctrl.CreateNumCetm(usr, ticket)
 	}
 	s.SendData(ctx, ticket)
 }

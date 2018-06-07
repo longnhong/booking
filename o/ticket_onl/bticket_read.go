@@ -5,7 +5,6 @@ import (
 	"cetm_booking/x/rest"
 	"errors"
 	"gopkg.in/mgo.v2/bson"
-	"time"
 )
 
 func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking, err error) {
@@ -128,24 +127,20 @@ func GetTicketNear(customerId string) (btk *RateTicket, err error) {
 	return btk, err
 }
 
-func (tk *TicketBooking) UpdateTimeCheckIn(cnum string, idCetm string) error {
+func (tk *TicketBooking) UpdateTimeCheckIn() error {
 	var timeNow = math.GetTimeNowVietNam().Unix()
 	var tracks = tk.updateTrack(tk.ServiceID, tk.BranchID, BookingStateConfirmed, timeNow)
 	var up = bson.M{
-		"updated_at":     time.Now().Unix(),
-		"check_in_at":    timeNow,
-		"status":         BookingStateConfirmed,
-		"tracks":         tracks,
-		"cnum_cetm":      cnum,
-		"id_ticket_cetm": idCetm,
+		"updated_at":  timeNow,
+		"check_in_at": timeNow,
+		"status":      BookingStateConfirmed,
+		"tracks":      tracks,
 	}
 	var err = TicketBookingTable.UnsafeUpdateByID(tk.ID, up)
 	if err == nil {
 		tk.CheckInAt = timeNow
 		tk.Status = BookingStateConfirmed
 		tk.Tracks = tracks
-		tk.CnumCetm = cnum
-		tk.IdTicketCetm = idCetm
 	}
 	return err
 }
@@ -326,8 +321,6 @@ type TicketDetailReport struct {
 
 func GetDetailReport(branchIds []string, timeStart int64, timeEnd int64) (btks []*TicketDetailReport, err error) {
 	btks = make([]*TicketDetailReport, 0)
-	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
-	var timeNew = math.BeginningOfDay().In(loc)
 	var queryMatch = bson.M{
 		"branch_id": bson.M{"$in": branchIds},
 		"created_at": bson.M{
@@ -344,17 +337,19 @@ func GetDetailReport(branchIds []string, timeStart int64, timeEnd int64) (btks [
 	}
 	var unWindCus = bson.M{"path": "$customer", "preserveNullAndEmptyArrays": true}
 	var project1 = bson.M{
-		"date":        bson.M{"$add": []interface{}{timeNew, bson.M{"$multiply": []interface{}{"$time_go_bank", 1000}}}},
+		"date":        bson.M{"$add": []interface{}{math.NewTimeVN(), bson.M{"$multiply": []interface{}{"$time_go_bank", 1000}}}}, //7*60*1000
 		"customer_id": 1, "service_id": 1, "service_name": 1, "branch_id": 1, "branch_address": 1,
 		"type_ticket": 1, "lang": 1, "customer_code": 1, "check_in_at": 1, "avatar_teller": 1, "id_ticket_cetm": 1,
 		"branch_name": 1, "tracks": 1, "cnum_cetm": 1, "teller_id": 1, "teller": 1,
-		"serving_time": 1, "waiting_time": 1, "is_rate": 1, "status": 1, "customer": 1,
+		"serving_time": 1, "waiting_time": 1, "is_rate": 1, "status": 1, "customer": 1, "time_go_bank": 1, "updated_at": 1, "created_at": 1,
 	}
 	var group = bson.M{
-		"_id": bson.M{
-			"$hour": "$date",
-		},
+		"_id":     bson.M{"$hour": "$date"},
 		"tickets": bson.M{"$push": "$$ROOT"},
+	}
+	var pro2 = bson.M{
+		"_id":     bson.M{"$add": []interface{}{"$_id", 7}},
+		"tickets": "$tickets",
 	}
 	query = []bson.M{
 		{"$match": queryMatch},
@@ -362,9 +357,11 @@ func GetDetailReport(branchIds []string, timeStart int64, timeEnd int64) (btks [
 		{"$unwind": unWindCus},
 		{"$project": project1},
 		{"$group": group},
+		{"$project": pro2},
 	}
 	err = TicketBookingTable.Pipe(query).All(&btks)
 	rest.IsErrorRecord(err)
+
 	return btks, err
 }
 

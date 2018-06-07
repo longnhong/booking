@@ -55,7 +55,7 @@ func CreateTicket(tk *ticket_onl.TicketBooking) (*InfoBank, error) {
 	return data.Data, err
 }
 
-func CreateNumCetm(userTK *user.User, ticket *ticket_onl.TicketBooking, isCreate bool) (countPP int, err error) {
+func CreateNumCetm(userTK *user.User, ticket *ticket_onl.TicketBooking) (countPP int, err error) {
 	var dataTicketSend = DataTicketSendCetm{
 		TicketBooking: ticket,
 		Customer:      userTK,
@@ -66,10 +66,6 @@ func CreateNumCetm(userTK *user.User, ticket *ticket_onl.TicketBooking, isCreate
 	if err != nil {
 		return 0, err
 	}
-	if isCreate {
-		ticket.UpdateByCnumCetm(data.Data.Cnum, data.Data.Id)
-	} else {
-		ticket.UpdateTimeCheckIn(data.Data.Cnum, data.Data.Id)
-	}
+	ticket.UpdateByCnumCetm(data.Data.Cnum, data.Data.Id)
 	return data.Data.CountPeople, err
 }

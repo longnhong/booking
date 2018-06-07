@@ -20,5 +20,10 @@ func (action *TicketAction) actionCheckCode() {
 		action.SetError(err)
 		return
 	}
+	err = ticket.UpdateTimeCheckIn()
+	if err != nil {
+		action.SetError(err)
+		return
+	}
 	action.Ticket = ticket
 }

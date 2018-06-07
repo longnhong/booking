@@ -14,8 +14,7 @@ var timeFormats = []string{"1/2/2006", "1/2/2006 15:4:5", "2006-1-2 15:4:5", "20
 
 // lay gio hien tai he thong
 func GetTimeNowVietNam() time.Time {
-	var LocNowVietNam, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
-	return time.Now().In(LocNowVietNam)
+	return time.Now().In(loc)
 }
 
 type Now struct {
@@ -337,13 +336,19 @@ func ConvertTimeToString(timex int64) string {
 }
 
 func HourMinute() float32 {
-	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	var timeNow = time.Now().In(loc)
 	return float32(timeNow.Hour()) + float32(timeNow.Minute())/60
 }
 
+var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
+
+func BeginningOfDayVN() time.Time {
+	return BeginningOfDay().In(loc)
+}
+func NewTimeVN() time.Time {
+	return new(time.Time).In(loc)
+}
 func HourMinuteEpoch(timeValue int64) float32 {
-	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	var timeNow = time.Unix(timeValue, 0).In(loc)
 	return float32(timeNow.Hour()) + float32(timeNow.Minute())/60
 }
@@ -362,7 +367,6 @@ func GetDayCount(dateStart int64, dateEnd int64) (dayCount int, dateTime1 time.T
 }
 
 func BeginAndEndDay(val int64) (start int64, end int64) {
-	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	var timeNow = time.Unix(val, 0).In(loc)
 	start = New(timeNow).BeginningOfDay().Unix()
 	end = New(timeNow).EndOfDay().Unix()
@@ -376,7 +380,6 @@ func BeginAndEndDayNow() (start int64, end int64) {
 }
 
 func TimeToString(val int64) string {
-	var loc, _ = time.LoadLocation("Asia/Ho_Chi_Minh")
 	var timeNow = time.Unix(val, 0).In(loc)
 	var minute = timeNow.Minute()
 	var minuteStr string

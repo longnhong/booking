@@ -51,7 +51,7 @@ func (tkWorker *TicketWorker) getTicketSenPush() {
 	var tkDays = tkWorker.TicketCaches
 	var timeNow = math.HourMinute()
 	for _, tk := range tkDays {
-		go sendPush(timeNow, tk, 0)
+		sendPush(timeNow, tk, 0)
 	}
 }
 
@@ -103,7 +103,7 @@ func (tkWorker *TicketWorker) getTicketSenPushNear() {
 	var tkDays = tkWorker.TicketCaches
 	var timeNow = math.HourMinute()
 	for _, tk := range tkDays {
-		go sendPush(timeNow, tk, 1)
+		sendPush(timeNow, tk, 1)
 	}
 }
 

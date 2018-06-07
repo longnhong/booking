@@ -18,6 +18,6 @@ func (s *ticketServer) handlerCreateTkCetm(ctx *gin.Context) {
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)
 	var ticket = s.actionChange("", userTK.ID, ticket_onl.BookingStateCreateCetm, extra)
-	ctrl.CreateNumCetm(userTK, ticket, true)
+	ctrl.CreateNumCetm(userTK, ticket)
 	s.SendData(ctx, ticket)
 }

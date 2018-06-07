@@ -24,7 +24,6 @@ func (s *ticketServer) handlerCheckCode(ctx *gin.Context) {
 		rest.AssertNil(errors.New("Code sai"))
 	}
 	var userTK = auth.GetUserByID(ticket.CustomerID)
-	ctrl.CreateNumCetm(userTK, ticket, false)
 	var data = ctrl.DataTicketSendCetm{
 		TicketBooking: ticket,
 		Customer:      userTK,
