@@ -26,7 +26,7 @@ func (action *TicketAction) actionFinish(ticket *ticket_onl.TicketBooking) {
 	}
 	action.Ticket = ticket
 
-	if status == ticket_onl.BookingStateFinished {
+	if action.Action == ticket_onl.BookingStateFinished {
 		pDevices, err := push_token.GetPushsUserId(ticket.CustomerID)
 		if err != nil {
 			action.SetError(err)
