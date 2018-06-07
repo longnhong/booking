@@ -13,7 +13,7 @@ func (action *TicketAction) handlerAction(ticket *ticket_onl.TicketBooking) {
 	case ticket_onl.BookingStateDelete:
 		action.actionDelete(ticket)
 	case ticket_onl.BookingStateSancelled:
-		//fallthrough
+		fallthrough
 	case ticket_onl.BookingStateFinished:
 		action.actionFinish(ticket)
 	case ticket_onl.BookingStateNotArrived:

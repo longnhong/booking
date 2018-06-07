@@ -14,7 +14,8 @@ func (action *TicketAction) actionFinish(ticket *ticket_onl.TicketBooking) {
 		action.SetError(err)
 		return
 	}
-	if ticket.Status == ticket_onl.BookingStateSancelled || ticket_onl.BookingStateFinished == ticket.Status {
+	var status = ticket.Status
+	if status == ticket_onl.BookingStateSancelled || ticket_onl.BookingStateFinished == status {
 		action.SetError(errors.New("Vé đã được phản hồi"))
 		return
 	}
@@ -25,10 +26,12 @@ func (action *TicketAction) actionFinish(ticket *ticket_onl.TicketBooking) {
 	}
 	action.Ticket = ticket
 
-	pDevices, err := push_token.GetPushsUserId(ticket.CustomerID)
-	if err != nil {
-		action.SetError(err)
-		return
+	if status == ticket_onl.BookingStateFinished {
+		pDevices, err := push_token.GetPushsUserId(ticket.CustomerID)
+		if err != nil {
+			action.SetError(err)
+			return
+		}
+		sendFeedback(pDevices, ticket, action.Action)
 	}
-	sendFeedback(pDevices, ticket, action.Action)
 }
