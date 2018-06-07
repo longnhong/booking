@@ -62,33 +62,30 @@ func setDataNoti(title string, des string, tk *ticket_onl.TicketBooking, pDevice
 }
 
 func sendFeedback(pDevices []string, tk *ticket_onl.TicketBooking, status ticket_onl.BookingState) {
-	var title = "Feedback cho dịch vụ."
-	var des string
-	var stateNotify notify.StateNotify
+
 	if status == ticket_onl.BookingStateFinished {
-		des = "Teller " + tk.Teller + " đã phục vụ bạn. Hãy phản hồi về chất lượng dịch vụ."
-		stateNotify = notify.CETM_FINISHED
-	} else {
-		des = "Vé của bạn đã bị hủy. Bạn có muốn phản hồi về chất lượng dịch vụ?"
-		stateNotify = notify.CETM_CANCELLED
+		var title = "Feedback cho dịch vụ."
+		var des = "Teller " + tk.Teller + " đã phục vụ bạn. Hãy phản hồi về chất lượng dịch vụ."
+		var stateNotify = notify.CETM_FINISHED
+		var noti = notify.Notify{
+			Title:       title,
+			Description: des,
+			BticketID:   tk.ID,
+			CustomerId:  tk.CustomerID,
+			State:       stateNotify,
+		}
+		noti.CreateNotify()
+		var notifyTk = ticket_onl.NotifyTicket{}
+		notifyTk.Notify = &noti
+		notifyTk.Ticket = tk
+		var send = fcm.FcmMessageData{
+			Data: notifyTk,
+		}
+		send.Title = title
+		send.Body = des
+		fcm.FcmCustomer.SendToManyData(pDevices, send)
 	}
-	var noti = notify.Notify{
-		Title:       title,
-		Description: des,
-		BticketID:   tk.ID,
-		CustomerId:  tk.CustomerID,
-		State:       stateNotify,
-	}
-	noti.CreateNotify()
-	var notifyTk = ticket_onl.NotifyTicket{}
-	notifyTk.Notify = &noti
-	notifyTk.Ticket = tk
-	var send = fcm.FcmMessageData{
-		Data: notifyTk,
-	}
-	send.Title = title
-	send.Body = des
-	fcm.FcmCustomer.SendToManyData(pDevices, send)
+
 }
 
 func sendFee(pDevice string, tk *ticket_onl.TicketBooking) {
