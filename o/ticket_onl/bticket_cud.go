@@ -50,6 +50,7 @@ func (tk *TicketBooking) UpdateTicketBookingByCetm(upC *UpdateCetm) error {
 		tk.ServingTime = upC.ServingTime
 		tk.WaitingTime = upC.WaitingTime
 		tk.Teller = upC.Teller
+		tk.ServingAt = upC.ServingAt
 	}
 	return err
 }

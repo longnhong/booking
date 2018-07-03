@@ -126,7 +126,7 @@ func (tkWorker *TicketWorker) getTicketSenPushOut() (ticketDays []*ticket_onl.Ti
 func (tkWorker *TicketWorker) sendPushOut() {
 	var tkDays, ids = tkWorker.getTicketSenPushOut()
 	for _, tk := range tkDays {
-		go sendPush(0, tk, 2)
+		sendPush(0, tk, 2)
 	}
 	if len(ids) > 0 {
 		ticket_onl.UpdateStatusTickets(ids, ticket_onl.BookingStateNotArrived)

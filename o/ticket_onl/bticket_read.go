@@ -1,6 +1,7 @@
 package ticket_onl
 
 import (
+	"cetm_booking/common"
 	"cetm_booking/x/math"
 	"cetm_booking/x/rest"
 	"errors"
@@ -8,8 +9,8 @@ import (
 )
 
 func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking, err error) {
-	var timeBeginDay = math.BeginningOfDay().Unix()
-	var tiemEnOfday = math.EndOfDay().Unix()
+	var timeBeginDay = math.GetTimeNowVietNam().Unix() - int64(common.ConfigSystemBooking.StartNear*3600)
+	var tiemEnOfday = math.GetTimeNowVietNam().Unix() + int64(common.ConfigSystemBooking.StartNear*3600)
 	var queryMatch = bson.M{
 		"customer_code": customerCode,
 		"branch_id":     branchID,
@@ -22,7 +23,7 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 	err = TicketBookingTable.FindOne(queryMatch, &tk)
 	if err != nil {
 		if err.Error() == "not found" {
-			err = rest.BadRequestValid(errors.New("Code không tồn tại!"))
+			err = rest.BadRequestValid(errors.New("Code không tồn tại hoặc chưa đến thời gian cho phép?"))
 		}
 		return
 	}

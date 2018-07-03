@@ -27,6 +27,7 @@ type TicketBooking struct {
 	Tracks            []TicketHst  `json:"tracks"  bson:"tracks"`
 	CnumCetm          string       `json:"cnum_cetm"  bson:"cnum_cetm"`
 	TellerID          string       `json:"teller_id"  bson:"teller_id"`
+	ServingAt         int64        `json:"serving_at"  bson:"serving_at"`
 	Teller            string       `json:"teller"  bson:"teller"`
 	ServingTime       int64        `json:"serving_time"  bson:"serving_time"`
 	WaitingTime       int64        `json:"waiting_time"  bson:"waiting_time"`
@@ -57,6 +58,7 @@ type UpdateCetm struct {
 	Status       BookingState `json:"status"  bson:"status"`
 	ServingTime  int64        `json:"serving_time"  bson:"serving_time"`
 	WaitingTime  int64        `json:"waiting_time"  bson:"waiting_time"`
+	ServingAt    int64        `json:"serving_at"  bson:"serving_at"`
 }
 
 type WhenCreateTicketInCetm struct {

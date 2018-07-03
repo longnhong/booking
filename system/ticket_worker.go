@@ -35,7 +35,7 @@ func (tw *TicketWorker) OnActionDone() (event.Line, event.Cancel) {
 }
 
 func (tkDay *TicketWorker) removeTksTicketWorkerDay() {
-	if tkDay == nil {
+	if tkDay != nil {
 		if len(tkDay.TicketCaches) > 0 {
 			for k := range tkDay.TicketCaches {
 				delete(tkDay.TicketCaches, k)
