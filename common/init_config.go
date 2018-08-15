@@ -17,6 +17,8 @@ type ConfigSystem struct {
 	CyclePushDay       int
 	CyclePushTicket    int
 	UserTicketDay      int
+	UserMail           string
+	PasswordMail       string
 }
 
 type DB struct {

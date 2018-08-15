@@ -3,7 +3,6 @@ package ticket
 import (
 	ctrl "cetm_booking/ctrl_to_cetm"
 	user "cetm_booking/o/auth"
-	"cetm_booking/o/rate"
 	"cetm_booking/o/ticket_onl"
 	"cetm_booking/system"
 	"cetm_booking/x/math"
@@ -37,7 +36,6 @@ func NewTicketServer(parent *gin.RouterGroup, name string, tkWorker *system.Tick
 	s.GET("/branch_cetm_tickets", s.handlerGetTicketsDay)
 	s.GET("/ticket_near", s.handlerTicketNear)
 	s.POST("/rate", s.handlerRate)
-	s.POST("/no_rate", s.handlerNoRate)
 	s.GET("/get_ticket", s.handlerGetTicket)
 	s.GET("/ticket_priority", s.handlerPrioritys)
 	s.POST("/crate_tkcetm", s.handlerCreateTkCetm)
@@ -108,20 +106,13 @@ func (s *ticketServer) handlerMySchedule(ctx *gin.Context) {
 }
 
 func (s *ticketServer) handlerRate(ctx *gin.Context) {
-	var usrTk, _ = user.GetUserFromToken(ctx.Request)
-	var body *rate.Rate
-	rest.AssertNil(ctx.BindJSON(&body))
-	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TypeRated)
-	rest.AssertNil(err)
-	body.CustomerId = usrTk.ID
-	body.CrateRate()
-	s.SendData(ctx, nil)
-}
-
-func (s *ticketServer) handlerNoRate(ctx *gin.Context) {
 	user.GetFromToken(ctx.Request)
-	var body *rate.Rate
-	var err = ticket_onl.UpdateRate(body.TicketIdBk, ticket_onl.TypeNoRate)
+	var body = struct {
+		TicketIdBk string           `json:"bticket_id"`
+		Rate       *ticket_onl.Rate `json:"rate"`
+	}{}
+	rest.AssertNil(ctx.BindJSON(&body))
+	var err = ticket_onl.UpdateRate(body.TicketIdBk, body.Rate)
 	rest.AssertNil(err)
 	s.SendData(ctx, nil)
 }

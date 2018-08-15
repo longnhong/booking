@@ -7,6 +7,7 @@ import (
 	"cetm_booking/x/math"
 	"cetm_booking/x/rest"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,8 +17,9 @@ func (s *ticketServer) handlerUpdateTicketCus(ctx *gin.Context) {
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)
 	var ticket = s.actionChange(body.BTicketID, "", ticket_onl.BookingCustomerUpdate, extra)
-
+	fmt.Printf("THỜI GIAN THAY DOI", body)
 	var timeNow = math.GetTimeNowVietNam()
+	fmt.Printf("THỜI GIAN THAY DOI", timeNow.Unix())
 	if math.CompareDayTime(timeNow, body.TimeGoBank) == 0 {
 		ctrl.UpdateCounterTkCetm(usr, ticket)
 	}

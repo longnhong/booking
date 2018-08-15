@@ -7,8 +7,9 @@ import (
 
 func (action *TicketAction) actionCheckCode() {
 	var data = struct {
-		CustomerCode string `json:"customer_code"`
-		BranchID     string `json:"branch_id"`
+		CustomerCode  string `json:"customer_code"`
+		BranchID      string `json:"branch_id"`
+		IsPrintTicket bool   `json:"is_printed"`
 	}{}
 	var err1 = json.Unmarshal(action.Extra, &data)
 	if err1 != nil {
@@ -20,10 +21,12 @@ func (action *TicketAction) actionCheckCode() {
 		action.SetError(err)
 		return
 	}
-	err = ticket.UpdateTimeCheckIn()
-	if err != nil {
-		action.SetError(err)
-		return
+	if data.IsPrintTicket {
+		err = ticket.UpdateTimeCheckIn()
+		if err != nil {
+			action.SetError(err)
+			return
+		}
 	}
 	action.Ticket = ticket
 }

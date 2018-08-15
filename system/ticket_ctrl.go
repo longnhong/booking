@@ -26,7 +26,7 @@ func (c *TicketWorker) TicketWorking(action *TicketAction) error {
 	err = action.GetError()
 	if err == nil {
 		var timegoBank = action.Ticket.TimeGoBank
-		if action.Action == ticket_onl.BookingStateCreated && math.CompareDayTime(math.GetTimeNowVietNam(), timegoBank) == 0 {
+		if (action.Action == ticket_onl.BookingStateCreated || action.Action == ticket_onl.BookingCustomerUpdate) && math.CompareDayTime(math.GetTimeNowVietNam(), timegoBank) == 0 {
 			var hourDay = math.HourMinuteEpoch(timegoBank)
 			var tkDay = ticket_onl.TicketDay{
 				TicketBooking: action.Ticket,

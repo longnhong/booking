@@ -9,8 +9,8 @@ import (
 )
 
 func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking, err error) {
-	var timeBeginDay = math.GetTimeNowVietNam().Unix() - int64(common.ConfigSystemBooking.StartNear*3600)
-	var tiemEnOfday = math.GetTimeNowVietNam().Unix() + int64(common.ConfigSystemBooking.StartNear*3600)
+	var timeBeginDay = math.GetTimeNowVietNam().Unix() - int64(common.ConfigSystemBooking.EndNear*3600)
+	var tiemEnOfday = math.GetTimeNowVietNam().Unix() + int64(common.ConfigSystemBooking.EndNear*3600)
 	var queryMatch = bson.M{
 		"customer_code": customerCode,
 		"branch_id":     branchID,
@@ -35,50 +35,26 @@ func CheckCustomerCode(customerCode string, branchID string) (tk *TicketBooking,
 	return
 }
 
-func GetCustomerMySchedule(customerId string) (btks []*RateTicket, err error) {
+func GetCustomerMySchedule(customerId string) (btks []*TicketBooking, err error) {
 	var status = []string{string(BookingStateSancelled), (string(BookingStateFinished))}
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 		"updated_at":  bson.M{"$ne": 0},
 		"status":      bson.M{"$in": status},
 	}
-	var query = []bson.M{}
-	var joinRate = bson.M{
-		"from":         "rate",
-		"localField":   "_id",
-		"foreignField": "bticket_id",
-		"as":           "rate",
-	}
-	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
-	query = []bson.M{
-		{"$match": queryMatch},
-		{"$lookup": joinRate},
-		{"$unwind": unWindRate},
-	}
-	err = TicketBookingTable.Pipe(query).All(&btks)
+
+	err = TicketBookingTable.FindWhere(queryMatch, &btks)
 	rest.IsErrorRecord(err)
 	return btks, err
 }
 
-func GetAllTicketCus(customerId string) (btks []*RateTicket, err error) {
+func GetAllTicketCus(customerId string) (btks []*TicketBooking, err error) {
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 		"updated_at":  bson.M{"$ne": 0},
 	}
-	var query = []bson.M{}
-	var joinRate = bson.M{
-		"from":         "rate",
-		"localField":   "_id",
-		"foreignField": "bticket_id",
-		"as":           "rate",
-	}
-	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
-	query = []bson.M{
-		{"$match": queryMatch},
-		{"$lookup": joinRate},
-		{"$unwind": unWindRate},
-	}
-	return btks, TicketBookingTable.Pipe(query).All(&btks)
+
+	return btks, TicketBookingTable.FindWhere(queryMatch, &btks)
 }
 
 func CheckTicketByDay(customerId string) (btks []*TicketBooking, err error) {
@@ -96,31 +72,13 @@ func CheckTicketByDay(customerId string) (btks []*TicketBooking, err error) {
 	return btks, rest.IsErrorRecord(err)
 }
 
-func GetTicketNear(customerId string) (btk *RateTicket, err error) {
+func GetTicketNear(customerId string) (btk *TicketBooking, err error) {
 	var queryMatch = bson.M{
 		"customer_id": customerId,
 		"status":      BookingStateFinished,
 	}
-	var query = []bson.M{}
-	var sort = bson.M{
-		"created_at": -1,
-	}
-	var joinRate = bson.M{
-		"from":         "rate",
-		"localField":   "_id",
-		"foreignField": "bticket_id",
-		"as":           "rate",
-	}
-	var unWindRate = bson.M{"path": "$rate", "preserveNullAndEmptyArrays": true}
-	query = []bson.M{
-		{"$match": queryMatch},
-		{"$lookup": joinRate},
-		{"$unwind": unWindRate},
-		{"$sort": sort},
-	}
-
-	var btks []*RateTicket
-	err = TicketBookingTable.Pipe(query).All(&btks)
+	var btks []*TicketBooking
+	err = TicketBookingTable.Find(queryMatch).Sort("-created_at").All(&btks)
 	if err == nil && len(btks) > 0 {
 		btk = btks[0]
 	}
@@ -168,7 +126,7 @@ func GetTicketDayInBranch(branchID string, timeStart int64, timeEnd int64) (btks
 			"$gte": timeStart,
 			"$lte": timeEnd,
 		},
-		"status": BookingStateCreated,
+		"status": bson.M{"$in": []interface{}{BookingStateCreated, BookingCustomerUpdate}},
 	}
 	var query = []bson.M{}
 	var joinUser = bson.M{
@@ -277,10 +235,13 @@ func GetTicketByUserNeedFeedback(userId string) (tks []*TicketBooking, err error
 	return
 }
 
-func UpdateRate(id string, numRate TypeRate) (err error) {
+func UpdateRate(id string, rat *Rate) (err error) {
 	var up = bson.M{
-		"is_rate": numRate,
-	}
+		"rate": bson.M{
+			"is_rate":    rat.IsRate,
+			"rate_point": rat.RatePoint,
+			"comment":    rat.Comment,
+		}}
 	err = TicketBookingTable.UnsafeUpdateByID(id, up)
 	rest.IsErrorRecord(err)
 	return

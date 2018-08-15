@@ -16,6 +16,7 @@ func (s *ticketServer) handlerCheckCode(ctx *gin.Context) {
 	var body = struct {
 		CustomerCode string `json:"customer_code"`
 		BranchID     string `json:"branch_id"`
+		IsPrinted    bool   `json:"is_printed"`
 	}{}
 	rest.AssertNil(ctx.BindJSON(&body))
 	var extra, _ = json.Marshal(body)

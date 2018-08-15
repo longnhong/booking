@@ -3,7 +3,6 @@ package ticket_onl
 import (
 	"cetm_booking/o/auth/user"
 	"cetm_booking/o/notify"
-	"cetm_booking/o/rate"
 	"cetm_booking/x/db/mongodb"
 )
 
@@ -31,8 +30,14 @@ type TicketBooking struct {
 	Teller            string       `json:"teller"  bson:"teller"`
 	ServingTime       int64        `json:"serving_time"  bson:"serving_time"`
 	WaitingTime       int64        `json:"waiting_time"  bson:"waiting_time"`
-	IsRate            TypeRate     `json:"is_rate"  bson:"is_rate"` //0: chưa rate, 1:rate, 2: khong rate
+	Rate              Rate         `json:"rate"  bson:"rate"` //0: chưa rate, 1:rate, 2: khong rate
 	Status            BookingState `json:"status"  bson:"status"`
+}
+
+type Rate struct {
+	IsRate    bool    `bson:"is_rate" json:"is_rate"`
+	RatePoint float32 `bson:"rate_point" json:"rate_point"`
+	Comment   string  `bson:"comment" json:"comment"`
 }
 
 type TicketHst struct {
@@ -40,11 +45,6 @@ type TicketHst struct {
 	BranchID  string       `json:"branch_id"  bson:"branch_id"`
 	MTime     int64        `json:"ctime"  bson:"ctime"`
 	Status    BookingState `json:"status"  bson:"status"`
-}
-
-type RateTicket struct {
-	TicketBooking `bson:",inline"`
-	Rate          *rate.Rate `json:"rate"  bson:"rate"`
 }
 
 type UpdateCetm struct {
@@ -111,14 +111,6 @@ type TicketBookingCreate struct {
 type BookingState string
 
 type TypeTicket string
-
-type TypeRate int
-
-const (
-	TypeDefaultRate = TypeRate(0)
-	TypeRated       = TypeRate(1)
-	TypeNoRate      = TypeRate(2)
-)
 
 const (
 	TypeNow      = TypeTicket("book_now")
